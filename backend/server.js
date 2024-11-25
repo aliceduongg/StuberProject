@@ -17,7 +17,7 @@ mongoose.connect(process.env.MONGO_URI, {
     useUnifiedTopology: true,
 })
 .then (() => console.log('Connected to MongoDB'))
-.catch (() => console.error ('Could not connect to MongoDB'));
+.catch (() => console.error ('Could not connect to MongoDB', err));
 
 
 
