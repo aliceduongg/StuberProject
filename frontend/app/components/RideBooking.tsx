@@ -51,8 +51,33 @@ export function RideBooking({ onBookingComplete }: RideBookingProps) {
     }
   };
   return (
-    <div>
+    <div className="space-y-4 p-4 border rounded-lg">
+      <h2 className="text-xl font-bold">Book a Ride</h2>
+      
+      <div className="space-y-2">
+        <label className="block text-sm font-medium">Pickup Location</label>
+        <Autocomplete 
+          onSelect={(location) => setPickupLocation(location)}
+        />
+      </div>
 
+      <div className="space-y-2">
+        <label className="block text-sm font-medium">Destination</label>
+        <Autocomplete 
+          onSelect={(location) => setDestination(location)}
+        />
+      </div>
+
+      {error && (
+        <p className="text-red-500 text-sm">{error}</p>
+      )}
+
+      <Button 
+        onClick={handleBookRide}
+        className="w-full"
+      >
+        Book Ride
+      </Button>
     </div>
   );
 }
