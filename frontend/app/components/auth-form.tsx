@@ -27,32 +27,36 @@ export function AuthForm({ type }: AuthFormProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-  
+
     // Validation for empty fields
     if (!email || !password || (type === "signup" && !role)) {
-      setError("Please fill in all the fields."); // Set error message
+      setError("Please fill in all the fields.");
       return;
     }
-  
+
     // Validation for email format
     if (!email.includes("@")) {
-      setError("Please enter a valid email address."); // Set error message
+      setError("Please enter a valid email address.");
       return;
     }
-  
+
     // Validation for password length
     if (password.length < 6) {
-      setError("Password must be at least 6 characters long."); // Set error message
+      setError("Password must be at least 6 characters long.");
       return;
     }
-  
+
     // Clear error if validation passes
     setError(null);
-  
-    // Simulate successful authentication
-    console.log("Submitting", { email, password, role });
-    localStorage.setItem("user", JSON.stringify({ email, role }));
-    router.push("/dashboard");
+
+    try {
+      // Simulate successful authentication
+      console.log("Submitting", { email, password, role });
+      localStorage.setItem("user", JSON.stringify({ email, role }));
+      router.push("/dashboard");
+    } catch (err) {
+      setError("Something went wrong. Please try again.");
+    }
   };
 
   return (
@@ -102,20 +106,19 @@ export function AuthForm({ type }: AuthFormProps) {
               </div>
             )}
           </div>
-          {error && <p className="text-red-500">{error}</p>} {/* Display error */}
+          {/* Display error */}
+          {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
+          <div className="flex justify-between mt-4">
+            <Button
+              variant="outline"
+              onClick={() => router.push(type === "login" ? "/signup" : "/login")}
+            >
+              {type === "login" ? "Sign Up" : "Login"}
+            </Button>
+            <Button type="submit">{type === "login" ? "Login" : "Sign Up"}</Button>
+          </div>
         </form>
       </CardContent>
-      <CardFooter className="flex justify-between">
-        <Button
-          variant="outline"
-          onClick={() => router.push(type === "login" ? "/signup" : "/login")}
-        >
-          {type === "login" ? "Sign Up" : "Login"}
-        </Button>
-        <Button type="submit" onClick={handleSubmit}>
-          {type === "login" ? "Login" : "Sign Up"}
-        </Button>
-      </CardFooter>
     </Card>
   );
 }
