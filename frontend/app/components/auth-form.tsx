@@ -27,16 +27,28 @@ export function AuthForm({ type }: AuthFormProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    // Basic validation
+  
+    // Validation for empty fields
     if (!email || !password || (type === "signup" && !role)) {
       setError("Please fill in all the fields."); // Set error message
       return;
     }
-
+  
+    // Validation for email format
+    if (!email.includes("@")) {
+      setError("Please enter a valid email address."); // Set error message
+      return;
+    }
+  
+    // Validation for password length
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters long."); // Set error message
+      return;
+    }
+  
     // Clear error if validation passes
     setError(null);
-
+  
     // Simulate successful authentication
     console.log("Submitting", { email, password, role });
     localStorage.setItem("user", JSON.stringify({ email, role }));
