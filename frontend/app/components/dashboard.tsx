@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Car, MapPin, Users, Calendar, Clock, DollarSign, CheckCircle, XCircle } from 'lucide-react'
+import Autocomplete, { fetchSuggestions } from '../components/Autocomplete'
 
 
 type User = {
@@ -32,6 +33,9 @@ type User = {
     const [date, setDate] = useState('')
     const [time, setTime] = useState('')
     const router = useRouter()
+    const [suggestions, setSuggestions] = useState([]); // To track autocomplete results
+    
+
   
     useEffect(() => {
       const storedUser = localStorage.getItem('user')
@@ -132,13 +136,7 @@ type User = {
                   <Label htmlFor="destination" className="text-pastel-blue">Destination</Label>
                   <div className="flex items-center">
                     <MapPin className="text-pastel-blue mr-2" />
-                    <Input
-                      id="destination"
-                      value={destination}
-                      onChange={(e) => setDestination(e.target.value)}
-                      placeholder="Enter your destination"
-                      className="flex-grow border-pastel-blue"
-                    />
+                    <Autocomplete />
                   </div>
                 </div>
                 <div className="space-y-2">
