@@ -68,8 +68,11 @@ export function AuthForm({ type }: AuthFormProps) {
       if (!response.ok) {
         throw new Error(data.msg || "Something went wrong");
       }
-
       localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify({
+        email: data.user.email,
+        role: data.user.role
+      }));
       router.push("/dashboard");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
