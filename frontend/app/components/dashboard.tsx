@@ -63,6 +63,28 @@ type User = {
     }
   
     const handleBookRide = () => {
+      // Validation for the fields
+      if (!destination.trim()) {
+        alert("Destination cannot be blank.");
+        return;
+      }
+    
+      if (!date) {
+        alert("Please set the date for your ride.");
+        return;
+      }
+    
+      if (!time) {
+        alert("Please set the time for your ride.");
+        return;
+      }
+    
+      if (passengers < 1) {
+        alert("Number of passengers must be at least 1.");
+        return;
+      }
+    
+      // Proceed with booking the ride if all fields are valid
       if (user?.role === 'rider') {
         const newRide: Ride = {
           id: Date.now(),
@@ -82,6 +104,7 @@ type User = {
         setTime('')
       }
     }
+    
   
     const handleRideAction = (rideId: number, action: 'accept' | 'reject') => {
       const updatedStatus: 'accepted' | 'rejected' = action === 'accept' ? 'accepted' : 'rejected'
@@ -239,5 +262,4 @@ type User = {
       </div>
     )
   }
-  
-  
+
