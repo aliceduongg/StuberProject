@@ -110,7 +110,7 @@ export function Dashboard() {
 
   const handleBookRide = async () => {
     // Validation for the fields
-    if (!destination.trim() || !pickupLocation)  {
+    if (!destination.trim() || !pickupLocation) {
       alert("Destination and pickup location cannot be blank.");
       return;
     }
@@ -133,12 +133,12 @@ export function Dashboard() {
     // Proceed with booking the ride if all fields are valid
     if (user?.role === "rider") {
       try {
-        const token = localStorage.getItem('token');
-        const response = await fetch('http://localhost:8080/api/rides', {
-          method: 'POST',
+        const token = localStorage.getItem("token");
+        const response = await fetch("http://localhost:8080/api/rides", {
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
             destination,
@@ -146,33 +146,33 @@ export function Dashboard() {
             passengers,
             date,
             time,
-            fare: Math.floor(Math.random() * 20) + 10 // Random fare between 10 and 30
-          })
+            fare: Math.floor(Math.random() * 20) + 10, // Random fare between 10 and 30
+          }),
         });
 
         if (!response.ok) {
-          throw new Error('Failed to book ride');
+          const errorData = await response.json();
+          throw new Error(errorData.msg || "Failed to book ride");
         }
-        
-      const newRide = await response.json();
 
+        const newRide = await response.json();
 
-      // Update local state with the new ride from the server
-      const updatedRides = [...rides, newRide];
-      setRides(updatedRides);
+        // Update local state with the new ride from the server
+        const updatedRides = [...rides, newRide];
+        setRides(updatedRides);
 
-      // Clear form
-      setDestination("");
-      setPickupLocation("");
-      setPassengers(1);
-      setDate("");
-      setTime("");
+        // Clear form
+        setDestination("");
+        setPickupLocation("");
+        setPassengers(1);
+        setDate("");
+        setTime("");
 
-      alert('Ride booked successfully!');
-    } catch (error) {
-      console.error('Error booking ride:', error);
-      alert('Failed to book ride. Please try again.');
-    }
+        alert("Ride booked successfully!");
+      } catch (error) {
+        console.error("Error booking ride:", error);
+        alert("Failed to book ride. Please try again.");
+      }
     }
   };
 
@@ -207,7 +207,24 @@ export function Dashboard() {
                 </Label>
                 <div className="flex items-center">
                   <MapPin className="text-pastel-blue mr-2" />
-                  <Autocomplete />
+                  <Autocomplete
+                    onSelect={(selected) => {
+                      setDestination(selected);
+                    }}
+                  />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="pickupLocation" className="text-pastel-blue">
+                  Pickup Location
+                </Label>
+                <div className="flex items-center">
+                  <MapPin className="text-pastel-blue mr-2" />
+                  <Autocomplete
+                    onSelect={(selected) => {
+                      setPickupLocation(selected);
+                    }}
+                  />
                 </div>
               </div>
               <div className="space-y-2">

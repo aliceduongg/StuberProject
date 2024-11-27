@@ -7,10 +7,11 @@ const router = express.Router();
 // Create a new ride
 router.post('/', auth, async (req, res) => {
   try {
-    const { destination, passengers, date, time, fare } = req.body;
+    const { destination, pickupLocation,  passengers, date, time, fare } = req.body;
     const newRide = new Ride({
       rider: req.user.id,
       destination,
+      pickupLocation,
       passengers,
       date,
       time,
