@@ -11,7 +11,10 @@ const { error } = require('console');
 require('dotenv').config();
 
 // Middleware 
-app.use(cors());
+app.use(cors({
+    origin: 'http://localhost:3000',
+    credentials: true
+  }));
 app.use(express.json()); //  to parse JSON data 
 
 // Connect to mongoose database

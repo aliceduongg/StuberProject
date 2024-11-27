@@ -8,7 +8,7 @@ const router = express.Router();
 // Register
 router.post('/signup', async (req, res) => {
   try {
-    const { email, password, name, role } = req.body;
+    const { email, password, firstName, lastName, role } = req.body;
 
     let user = await User.findOne({ email });
     if (user) {
@@ -21,7 +21,8 @@ router.post('/signup', async (req, res) => {
     user = new User({
       email,
       password: hashedPassword,
-      name,
+      firstName,
+      lastName,
       role,
     });
 
@@ -40,7 +41,8 @@ router.post('/signup', async (req, res) => {
     });
   } catch (err) {
     console.error(err.message);
-    res.status(500).send('Server error');
+    // res.status(500).send('Server error');
+    res.status(500).json({msg:'Server error'});
   }
 });
 
@@ -72,7 +74,8 @@ router.post('/login', async (req, res) => {
     });
   } catch (err) {
     console.error(err.message);
-    res.status(500).send('Server error');
+    // res.status(500).send('Server error');
+    res.status(500).json({msg:'Server error'});
   }
 });
 

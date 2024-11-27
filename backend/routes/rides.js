@@ -21,7 +21,8 @@ router.post('/', auth, async (req, res) => {
     res.json(ride);
   } catch (err) {
     console.error(err.message);
-    res.status(500).send('Server error');
+    // res.status(500).send('Server error');
+    res.status(500).json({msg:'Server error'});
   }
 });
 
@@ -32,7 +33,8 @@ router.get('/', auth, async (req, res) => {
     res.json(rides);
   } catch (err) {
     console.error(err.message);
-    res.status(500).send('Server error');
+    // res.status(500).send('Server error');
+    res.status(500).json({msg:'Server error'});
   }
 });
 
@@ -57,7 +59,8 @@ router.put('/:id', auth, async (req, res) => {
     res.json(ride);
   } catch (err) {
     console.error(err.message);
-    res.status(500).send('Server error');
+    // res.status(500).send('Server error');
+    res.status(500).json({msg:'Server error'});
   }
 });
 

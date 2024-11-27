@@ -21,41 +21,58 @@ type AuthFormProps = {
 export function AuthForm({ type }: AuthFormProps) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [role, setRole] = useState("rider");
-  const [error, setError] = useState<string | null>(null); // State for validation error
+  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validation for empty fields
-    if (!email || !password || (type === "signup" && !role)) {
+    if (!email || !password || (type === "signup" && (!role || !firstName || !lastName))) {
       setError("Please fill in all the fields.");
       return;
     }
 
-    // Validation for email format
     if (!email.includes("@")) {
       setError("Please enter a valid email address.");
       return;
     }
 
-    // Validation for password length
     if (password.length < 6) {
       setError("Password must be at least 6 characters long.");
       return;
     }
 
-    // Clear error if validation passes
     setError(null);
 
     try {
-      // Simulate successful authentication
-      console.log("Submitting", { email, password, role });
-      localStorage.setItem("user", JSON.stringify({ email, role }));
+      const endpoint = type === "login" ? "/api/auth/login" : "/api/auth/signup";
+      const response = await fetch(`http://localhost:8080${endpoint}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          password,
+          firstName,
+          lastName,
+          role: type === "signup" ? role : undefined,
+        }),
+      });
+
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.msg || "Something went wrong");
+      }
+
+      localStorage.setItem("token", data.token);
       router.push("/dashboard");
     } catch (err) {
-      setError("Something went wrong. Please try again.");
+      setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
     }
   };
 
@@ -70,6 +87,28 @@ export function AuthForm({ type }: AuthFormProps) {
       <CardContent>
         <form onSubmit={handleSubmit}>
           <div className="grid w-full items-center gap-4">
+            {type === "signup" && (
+              <>
+                <div className="flex flex-col space-y-1.5">
+                  <Label htmlFor="firstName">First Name</Label>
+                  <Input
+                    id="firstName"
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                    required
+                  />
+                </div>
+                <div className="flex flex-col space-y-1.5">
+                  <Label htmlFor="lastName">Last Name</Label>
+                  <Input
+                    id="lastName"
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                    required
+                  />
+                </div>
+              </>
+            )}
             <div className="flex flex-col space-y-1.5">
               <Label htmlFor="email">Email</Label>
               <Input
@@ -106,7 +145,6 @@ export function AuthForm({ type }: AuthFormProps) {
               </div>
             )}
           </div>
-          {/* Display error */}
           {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
           <div className="flex justify-between mt-4">
             <Button
