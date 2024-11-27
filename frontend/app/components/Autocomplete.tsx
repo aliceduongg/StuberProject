@@ -68,12 +68,12 @@ const Autocomplete: React.FC<AutocompleteProps> = ({ onSelect }) => {
         <ul className="absolute top-full left-0 w-full border border-gray-300 rounded-md max-h-60 overflow-y-auto bg-white shadow-lg z-20">
           {results.map((item, index) => (
             <li 
-              key={index} 
-              className="p-2 hover:bg-gray-100 cursor-pointer border-b last:border-b-0 border-gray-200"
-              onClick={() => handleSelect(item)}
-            >
-              {item.formattedAddress}
-            </li>
+            key={index} 
+            className="p-2 hover:bg-neutral-100 cursor-pointer border-b last:border-b-0 border-gray-200 text-neutral-800 bg-white dark:bg-neutral-950 dark:text-neutral-100 dark:hover:bg-neutral-800"
+            onClick={() => handleSelect(item)}
+          >
+            {item.formattedAddress}
+          </li>
           ))}
         </ul>
       )}
