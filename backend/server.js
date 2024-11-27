@@ -8,7 +8,7 @@ const { error } = require('console');
 
 
 // to access .env file
-dotenv.config(); 
+require('dotenv').config();
 
 // Middleware 
 app.use(cors());
@@ -18,8 +18,6 @@ app.use(express.json()); //  to parse JSON data
 mongoose.connect(process.env.MONGO_URI)
 .then (() => console.log('Connected to MongoDB'))
 .catch ((error) => console.error ('Could not connect to MongoDB', error));
-
-
 
 app.get("/api/home", (req, res) => {
     res.json({ message: 'Hello from server!' });
