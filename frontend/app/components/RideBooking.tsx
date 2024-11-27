@@ -1,12 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import Autocomplete from "./Autocomplete";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import Autocomplete from "./Autocomplete";
 
 interface RideBookingProps {
-  onBookingComplete?: () => void; // call function when booking is complete
+  onBookingComplete?: () => void;
 }
 
 export function RideBooking({ onBookingComplete }: RideBookingProps) {
@@ -19,28 +19,26 @@ export function RideBooking({ onBookingComplete }: RideBookingProps) {
   const [error, setError] = useState<string | null>(null);
 
   const handleBookRide = async () => {
-    if (
-      !destination ||
-      !pickupLocation ||
-      !passengers ||
-      !date ||
-      !time ||
-      fare <= 1
-    ) {
-      setError(
-        "Please fill in all required fields and ensure fare is greater than 0"
-      );
+    if (!destination || !pickupLocation || !passengers || !date || !time || fare <= 1) {
+      setError("Please fill in all required fields and ensure fare is greater than 0");
       return;
     }
 
     try {
       const token = localStorage.getItem("token");
+      if (!token) {
+        setError("Please login to book a ride");
+        return;
+      }
+
+      const headers: HeadersInit = {
+        "Content-Type": "application/json",
+        "x-auth-token": token
+      };
+
       const response = await fetch("http://localhost:8080/api/rides", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
+        headers,
         body: JSON.stringify({
           destination,
           pickupLocation,
@@ -53,6 +51,7 @@ export function RideBooking({ onBookingComplete }: RideBookingProps) {
       });
 
       const data = await response.json();
+      
       if (!response.ok) {
         throw new Error(data.msg || "Failed to book ride");
       }
@@ -67,12 +66,15 @@ export function RideBooking({ onBookingComplete }: RideBookingProps) {
       setPassengers(1);
       setDate("");
       setTime("");
-      setFare(0);
+      setFare(1);
       setError(null);
-    } catch (error) {
-      setError(error instanceof Error ? error.message : "Failed to book ride");
+      
+    } catch (error: any) {
+      console.error("Error booking ride:", error);
+      setError(error?.message || "Failed to book ride. Please try again.");
     }
   };
+
   return (
     <div className="space-y-4 p-4 border rounded-lg">
       <h2 className="text-xl font-bold">Book a Ride</h2>
@@ -88,9 +90,7 @@ export function RideBooking({ onBookingComplete }: RideBookingProps) {
       </div>
 
       <div className="space-y-2">
-        <label className="block text-sm font-medium">
-          Number of Passengers
-        </label>
+        <label className="block text-sm font-medium">Number of Passengers</label>
         <Input
           type="number"
           value={passengers}
