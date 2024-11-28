@@ -48,7 +48,7 @@ const Autocomplete: React.FC<AutocompleteProps> = ({ onSelect }) => {
     const selectedDestination = item.formattedAddress;
     setQuery(selectedDestination);
     setResults([]);
-    
+
     // If an onSelect prop is provided (from parent component), call it
     if (onSelect) {
       onSelect(selectedDestination);
@@ -66,14 +66,14 @@ const Autocomplete: React.FC<AutocompleteProps> = ({ onSelect }) => {
       />
       {results.length > 0 && (
         <ul className="absolute top-full left-0 w-full border border-gray-300 rounded-md max-h-60 overflow-y-auto bg-white shadow-lg z-20">
-          {results.map((item, index) => (
-            <li 
-            key={index} 
-            className="p-2 hover:bg-neutral-100 cursor-pointer border-b last:border-b-0 border-gray-200 text-neutral-800 bg-white dark:bg-neutral-950 dark:text-neutral-100 dark:hover:bg-neutral-800"
-            onClick={() => handleSelect(item)}
-          >
-            {item.formattedAddress}
-          </li>
+          {results.map((item) => (
+            <li
+              key={`${item.formattedAddress}-${item.latitude}-${item.longitude}`}
+              className="p-2 hover:bg-neutral-100 cursor-pointer border-b last:border-b-0 border-gray-200 text-neutral-800 bg-white dark:bg-neutral-950 dark:text-neutral-100 dark:hover:bg-neutral-800"
+              onClick={() => handleSelect(item)}
+            >
+              {item.formattedAddress}
+            </li>
           ))}
         </ul>
       )}
