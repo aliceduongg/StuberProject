@@ -12,6 +12,12 @@ export default {
   		colors: {
   			background: 'var(--background)',
   			foreground: 'var(--foreground)',
+			'pastel-blue': '#4f9dc9', // A soft blue color
+			'pastel-yellow': '#fce38a', // Optional for accents
+			'blue-light': '#dceefb',   // Light blue for backgrounds
+			'blue-dark': '#1d4e89',    // Darker blue for text or borders
+			'pastel-pink': '#ffafcc',
+			'gold': '#ffd700',
   			sidebar: {
   				DEFAULT: 'hsl(var(--sidebar-background))',
   				foreground: 'hsl(var(--sidebar-foreground))',
@@ -29,6 +35,10 @@ export default {
   			sm: 'calc(var(--radius) - 4px)'
   		},
   		keyframes: {
+			gradient: {
+				'0%': { 'background-position': '0% 50%' },
+          		'100%': { 'background-position': '200% 50%' },
+			  },
   			'accordion-down': {
   				from: {
   					height: '0'
@@ -48,7 +58,8 @@ export default {
   		},
   		animation: {
   			'accordion-down': 'accordion-down 0.2s ease-out',
-  			'accordion-up': 'accordion-up 0.2s ease-out'
+  			'accordion-up': 'accordion-up 0.2s ease-out',
+			'gradient-slide': 'gradient 15s linear infinite'
   		}
   	}
   },
