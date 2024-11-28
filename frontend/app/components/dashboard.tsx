@@ -87,6 +87,7 @@ export function Dashboard() {
   };
 
   const handleBookingComplete = (newRide: Ride) => {
+    fetchRides();
     setRides((prevRides) => [...prevRides, newRide]);
   };
 
