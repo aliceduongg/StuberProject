@@ -15,11 +15,12 @@ export function RideBooking({ onBookingComplete }: RideBookingProps) {
   const [passengers, setPassengers] = useState(1);
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
-  const [fare, setFare] = useState<number>(1);
+  const [fare, setFare] = useState<number>(0);
   const [error, setError] = useState<string | null>(null);
 
   const handleBookRide = async () => {
-    if (!destination || !pickupLocation || !passengers || !date || !time || fare <= 1) {
+    console.log({ destination, pickupLocation, passengers, date, time, fare }); 
+    if (!destination || !pickupLocation || !passengers || !date || !time || fare <= 0) {
       setError("Please fill in all required fields and ensure fare is greater than 0");
       return;
     }
@@ -66,7 +67,7 @@ export function RideBooking({ onBookingComplete }: RideBookingProps) {
       setPassengers(1);
       setDate("");
       setTime("");
-      setFare(1);
+      setFare(0);
       setError(null);
       
     } catch (error: any) {

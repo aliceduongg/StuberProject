@@ -11,7 +11,16 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Car, MapPin, Users, Calendar, Clock, DollarSign, CheckCircle, XCircle } from 'lucide-react';
+import {
+  Car,
+  MapPin,
+  Users,
+  Calendar,
+  Clock,
+  DollarSign,
+  CheckCircle,
+  XCircle,
+} from "lucide-react";
 import { RideBooking } from "./RideBooking";
 
 type User = {
@@ -44,8 +53,8 @@ export function Dashboard() {
 
       const response = await fetch("http://localhost:8080/api/rides", {
         headers: {
-          "Authorization": `Bearer ${token}`,
-          "x-auth-token": token
+          Authorization: `Bearer ${token}`,
+          "x-auth-token": token,
         },
       });
 
@@ -81,20 +90,26 @@ export function Dashboard() {
     setRides((prevRides) => [...prevRides, newRide]);
   };
 
-  const handleRideAction = async (rideId: number, action: "accept" | "reject") => {
+  const handleRideAction = async (
+    rideId: number,
+    action: "accept" | "reject"
+  ) => {
     try {
       const token = localStorage.getItem("token");
       if (!token) {
         throw new Error("No authentication token found");
       }
 
-      const response = await fetch(`http://localhost:8080/api/rides/${rideId}/${action}`, {
-        method: "PUT",
-        headers: {
-          "Authorization": `Bearer ${token}`,
-          "x-auth-token": token
-        },
-      });
+      const response = await fetch(
+        `http://localhost:8080/api/rides/${rideId}/${action}`,
+        {
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "x-auth-token": token,
+          },
+        }
+      );
 
       if (!response.ok) {
         throw new Error(`Failed to ${action} ride`);
@@ -102,7 +117,9 @@ export function Dashboard() {
 
       const updatedRide = await response.json();
       setRides((prevRides) =>
-        prevRides.map((ride) => (ride.id === updatedRide.id ? updatedRide : ride))
+        prevRides.map((ride) =>
+          ride.id === updatedRide.id ? updatedRide : ride
+        )
       );
     } catch (error) {
       console.error(`Error ${action}ing ride:`, error);
@@ -208,7 +225,11 @@ export function Dashboard() {
                     <Car className="text-pastel-blue mr-2" />
                     <span>
                       Destination: {ride.destination} - Date: {ride.date} -
-                      Time: {ride.time}
+                      Time: {ride.time} -
+                      <span className="ml-2">
+                        <DollarSign className="inline h-4 w-4 text-pastel-blue" />
+                        {ride.fare}
+                      </span>
                     </span>
                   </div>
                   <span
@@ -228,4 +249,3 @@ export function Dashboard() {
     </div>
   );
 }
-
