@@ -21,22 +21,10 @@ export function Profile() {
     if (storedUser) {
       try {
         const parsedUser = JSON.parse(storedUser);
-        if (parsedUser && parsedUser._id) {
-          fetch(`/api/profile/${parsedUser._id}`)
-            .then((res) => {
-              if (!res.ok) throw new Error('Failed to fetch profile');
-              return res.json();
-            })
-            .then((data) => {
-              setUser(data);
-              setName(data.name || '');
-              setPhoneNumber(data.phoneNumber || '');
-              setPreferredPayment(data.preferredPayment || '');
-            })
-            .catch((err) => console.error('Error fetching profile:', err));
-        } else {
-          throw new Error('Invalid user data in localStorage');
-        }
+        setUser(parsedUser); // Use the localStorage data to populate the profile
+        setName(parsedUser.firstName + " " + parsedUser.lastName || '');
+        setPhoneNumber(parsedUser.phoneNumber || '');
+        setPreferredPayment(parsedUser.preferredPayment || '');
       } catch (err) {
         console.error('Error parsing user from localStorage:', err);
         alert('Invalid user data. Please log in again.');
@@ -48,6 +36,7 @@ export function Profile() {
     }
   }, [router]);
   
+  
 
   const handleUpdateProfile = async () => {
     try {
@@ -57,13 +46,25 @@ export function Profile() {
         body: JSON.stringify({ name, phoneNumber, preferredPayment }),
       });
       if (!res.ok) throw new Error("Failed to update profile");
+  
       const updatedUser = await res.json();
       setUser(updatedUser);
+  
+      // Update localStorage
+      const updatedProfile = {
+        ...user,
+        name,
+        phoneNumber,
+        preferredPayment,
+      };
+      localStorage.setItem("user", JSON.stringify(updatedProfile));
+  
       alert("Profile updated successfully!");
     } catch {
       alert("Error updating profile.");
     }
   };
+  
 
   if (!user) return null;
 
@@ -78,19 +79,41 @@ export function Profile() {
       </CardHeader>
       <CardContent>
         <form onSubmit={(e) => e.preventDefault()}>
-          <div className="grid w-full items-center gap-4">
-            <div className="flex flex-col space-y-1.5">
-              <Label htmlFor="name" className="text-pastel-blue">Name</Label>
-              <Input id="name" value={name} onChange={(e) => setName(e.target.value)} className="border-pastel-blue" />
-            </div>
-            <div className="flex flex-col space-y-1.5">
-              <Label htmlFor="phone" className="text-pastel-blue">Phone Number</Label>
-              <Input id="phone" value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} className="border-pastel-blue" />
-            </div>
-            <div className="flex flex-col space-y-1.5">
-              <Label htmlFor="payment" className="text-pastel-blue">Preferred Payment</Label>
-              <Input id="payment" value={preferredPayment} onChange={(e) => setPreferredPayment(e.target.value)} className="border-pastel-blue" />
-            </div>
+          <div className="flex flex-col space-y-1.5">
+            <Label htmlFor="name" className="text-pastel-blue">Full Name</Label>
+            <Input
+              id="name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="border-pastel-blue"
+            />
+          </div>
+          <div className="flex flex-col space-y-1.5">
+            <Label htmlFor="email" className="text-pastel-blue">Email</Label>
+            <Input
+              id="email"
+              value={user?.email || ""}
+              disabled
+              className="border-pastel-blue bg-gray-100"
+            />
+          </div>
+          <div className="flex flex-col space-y-1.5">
+            <Label htmlFor="phone" className="text-pastel-blue">Phone Number</Label>
+            <Input
+              id="phone"
+              value={phoneNumber}
+              onChange={(e) => setPhoneNumber(e.target.value)}
+              className="border-pastel-blue"
+            />
+          </div>
+          <div className="flex flex-col space-y-1.5">
+            <Label htmlFor="payment" className="text-pastel-blue">Preferred Payment</Label>
+            <Input
+              id="payment"
+              value={preferredPayment}
+              onChange={(e) => setPreferredPayment(e.target.value)}
+              className="border-pastel-blue"
+            />
           </div>
         </form>
       </CardContent>
