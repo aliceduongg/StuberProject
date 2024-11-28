@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import Autocomplete from "./Autocomplete";
 
 interface RideBookingProps {
-  onBookingComplete?: () => void;
+  onBookingComplete: (newRide: any) => void;
 }
 
 export function RideBooking({ onBookingComplete }: RideBookingProps) {
@@ -33,8 +33,8 @@ export function RideBooking({ onBookingComplete }: RideBookingProps) {
 
       const headers: HeadersInit = {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`,  // Changed to use Authorization header
-        "x-auth-token": token  // Keep this as well for backward compatibility
+        "Authorization": `Bearer ${token}`,
+        "x-auth-token": token
       };
 
       const response = await fetch("http://localhost:8080/api/rides", {
@@ -57,9 +57,8 @@ export function RideBooking({ onBookingComplete }: RideBookingProps) {
         throw new Error(data.msg || "Failed to book ride");
       }
 
-      if (onBookingComplete) {
-        onBookingComplete();
-      }
+      // Call the onBookingComplete callback with the new ride data
+      onBookingComplete(data);
 
       // Reset form
       setDestination("");
@@ -137,3 +136,5 @@ export function RideBooking({ onBookingComplete }: RideBookingProps) {
     </div>
   );
 }
+
+

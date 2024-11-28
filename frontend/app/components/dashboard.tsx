@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
@@ -11,19 +11,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Car,
-  MapPin,
-  Users,
-  Calendar,
-  Clock,
-  DollarSign,
-  CheckCircle,
-  XCircle,
-} from "lucide-react";
-import Autocomplete, { fetchSuggestions } from "../components/Autocomplete";
+import { Car, MapPin, Users, Calendar, Clock, DollarSign, CheckCircle, XCircle } from 'lucide-react';
+import { RideBooking } from "./RideBooking";
 
 type User = {
   email: string;
@@ -44,13 +33,32 @@ type Ride = {
 export function Dashboard() {
   const [user, setUser] = useState<User | null>(null);
   const [rides, setRides] = useState<Ride[]>([]);
-  const [destination, setDestination] = useState("");
-  const [pickupLocation, setPickupLocation] = useState("");
-  const [passengers, setPassengers] = useState(1);
-  const [date, setDate] = useState("");
-  const [time, setTime] = useState("");
   const router = useRouter();
-  const [suggestions, setSuggestions] = useState([]); // To track autocomplete results
+
+  const fetchRides = useCallback(async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        throw new Error("No authentication token found");
+      }
+
+      const response = await fetch("http://localhost:8080/api/rides", {
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "x-auth-token": token
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch rides");
+      }
+
+      const data = await response.json();
+      setRides(data);
+    } catch (error) {
+      console.error("Error fetching rides:", error);
+    }
+  }, []);
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
@@ -60,135 +68,45 @@ export function Dashboard() {
       router.push("/login");
     }
 
-    // Simulating fetching rides from an API
-    const storedRides = localStorage.getItem("rides");
-    if (storedRides) {
-      setRides(JSON.parse(storedRides));
-    } else {
-      // If no rides in storage, create some sample rides
-      const sampleRides: Ride[] = [
-        {
-          id: 1,
-          destination: "University Library",
-          pickupLocation: "Downtown Mall",
-          passengers: 2,
-          date: "2023-06-15",
-          time: "14:00",
-          status: "pending",
-          fare: 15,
-        },
-        {
-          id: 2,
-          destination: "Downtown Mall",
-          pickupLocation: "University Library",
-          passengers: 3,
-          date: "2023-06-16",
-          time: "10:30",
-          status: "pending",
-          fare: 20,
-        },
-        {
-          id: 3,
-          destination: "Sports Complex",
-          pickupLocation: "University Library",
-          passengers: 1,
-          date: "2023-06-17",
-          time: "18:00",
-          status: "pending",
-          fare: 12,
-        },
-      ];
-      setRides(sampleRides);
-      localStorage.setItem("rides", JSON.stringify(sampleRides));
-    }
-  }, [router]);
+    fetchRides();
+  }, [router, fetchRides]);
 
   const handleLogout = () => {
     localStorage.removeItem("user");
+    localStorage.removeItem("token");
     router.push("/login");
   };
 
-  const handleBookRide = async () => {
-    // Validation for the fields
-    if (!destination.trim() || !pickupLocation) {
-      alert("Destination and pickup location cannot be blank.");
-      return;
-    }
-
-    if (!date) {
-      alert("Please set the date for your ride.");
-      return;
-    }
-
-    if (!time) {
-      alert("Please set the time for your ride.");
-      return;
-    }
-
-    if (passengers < 1) {
-      alert("Number of passengers must be at least 1.");
-      return;
-    }
-
-    // Proceed with booking the ride if all fields are valid
-    if (user?.role === "rider") {
-      try {
-        const token = localStorage.getItem("token");
-        if (!token) {
-          alert("Please login to book a ride.");
-          return;
-        }
-
-        const response = await fetch("http://localhost:8080/api/rides", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "x-auth-token": token  // 
-          },
-          body: JSON.stringify({
-            destination,
-            pickupLocation,
-            passengers,
-            date,
-            time,
-            fare: Math.floor(Math.random() * 20) + 10, // Random fare between 10 and 30
-          }),
-        });
-
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.msg || "Failed to book ride");
-        }
-
-        const newRide = await response.json();
-        // Update local state with the new ride from the server
-        const updatedRides = [...rides, newRide];
-        setRides(updatedRides);
-
-        // Clear form
-        setDestination("");
-        setPickupLocation("");
-        setPassengers(1);
-        setDate("");
-        setTime("");
-
-        alert("Ride booked successfully!");
-      } catch (error) {
-        console.error("Error booking ride:", error);
-        alert("Failed to book ride. Please try again.");
-      }
-    }
+  const handleBookingComplete = (newRide: Ride) => {
+    setRides((prevRides) => [...prevRides, newRide]);
   };
 
-  const handleRideAction = (rideId: number, action: "accept" | "reject") => {
-    const updatedStatus: "accepted" | "rejected" =
-      action === "accept" ? "accepted" : "rejected";
+  const handleRideAction = async (rideId: number, action: "accept" | "reject") => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        throw new Error("No authentication token found");
+      }
 
-    const updatedRides = rides.map((ride) =>
-      ride.id === rideId ? { ...ride, status: updatedStatus } : ride
-    );
-    setRides(updatedRides);
-    localStorage.setItem("rides", JSON.stringify(updatedRides));
+      const response = await fetch(`http://localhost:8080/api/rides/${rideId}/${action}`, {
+        method: "PUT",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "x-auth-token": token
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to ${action} ride`);
+      }
+
+      const updatedRide = await response.json();
+      setRides((prevRides) =>
+        prevRides.map((ride) => (ride.id === updatedRide.id ? updatedRide : ride))
+      );
+    } catch (error) {
+      console.error(`Error ${action}ing ride:`, error);
+    }
   };
 
   if (!user) return null;
@@ -204,87 +122,7 @@ export function Dashboard() {
         </CardHeader>
         <CardContent>
           {user.role === "rider" && (
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="destination" className="text-pastel-blue">
-                  Destination
-                </Label>
-                <div className="flex items-center">
-                  <MapPin className="text-pastel-blue mr-2" />
-                  <Autocomplete
-                    onSelect={(selected) => {
-                      setDestination(selected);
-                    }}
-                  />
-                </div>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="pickupLocation" className="text-pastel-blue">
-                  Pickup Location
-                </Label>
-                <div className="flex items-center">
-                  <MapPin className="text-pastel-blue mr-2" />
-                  <Autocomplete
-                    onSelect={(selected) => {
-                      setPickupLocation(selected);
-                    }}
-                  />
-                </div>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="passengers" className="text-pastel-blue">
-                  Number of Passengers
-                </Label>
-                <div className="flex items-center">
-                  <Users className="text-pastel-blue mr-2" />
-                  <Input
-                    id="passengers"
-                    type="number"
-                    value={passengers}
-                    onChange={(e) => setPassengers(Number(e.target.value))}
-                    min={1}
-                    className="flex-grow border-pastel-blue"
-                  />
-                </div>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="date" className="text-pastel-blue">
-                  Date
-                </Label>
-                <div className="flex items-center">
-                  <Calendar className="text-pastel-blue mr-2" />
-                  <Input
-                    id="date"
-                    type="date"
-                    value={date}
-                    onChange={(e) => setDate(e.target.value)}
-                    className="flex-grow border-pastel-blue"
-                  />
-                </div>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="time" className="text-pastel-blue">
-                  Time
-                </Label>
-                <div className="flex items-center">
-                  <Clock className="text-pastel-blue mr-2" />
-                  <Input
-                    id="time"
-                    type="time"
-                    value={time}
-                    onChange={(e) => setTime(e.target.value)}
-                    className="flex-grow border-pastel-blue"
-                  />
-                </div>
-              </div>
-              <Button
-                onClick={handleBookRide}
-                className="bg-pastel-blue text-white hover:bg-pastel-yellow hover:text-pastel-blue"
-              >
-                <Car className="mr-2" />
-                Book Ride
-              </Button>
-            </div>
+            <RideBooking onBookingComplete={handleBookingComplete} />
           )}
           {user.role === "driver" && (
             <div>
@@ -390,3 +228,4 @@ export function Dashboard() {
     </div>
   );
 }
+
