@@ -134,11 +134,16 @@ export function Dashboard() {
     if (user?.role === "rider") {
       try {
         const token = localStorage.getItem("token");
+        if (!token) {
+          alert("Please login to book a ride.");
+          return;
+        }
+
         const response = await fetch("http://localhost:8080/api/rides", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
+            "x-auth-token": token  // 
           },
           body: JSON.stringify({
             destination,
@@ -156,7 +161,6 @@ export function Dashboard() {
         }
 
         const newRide = await response.json();
-
         // Update local state with the new ride from the server
         const updatedRides = [...rides, newRide];
         setRides(updatedRides);

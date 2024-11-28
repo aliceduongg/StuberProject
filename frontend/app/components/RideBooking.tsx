@@ -33,7 +33,8 @@ export function RideBooking({ onBookingComplete }: RideBookingProps) {
 
       const headers: HeadersInit = {
         "Content-Type": "application/json",
-        "x-auth-token": token
+        "Authorization": `Bearer ${token}`,  // Changed to use Authorization header
+        "x-auth-token": token  // Keep this as well for backward compatibility
       };
 
       const response = await fetch("http://localhost:8080/api/rides", {
