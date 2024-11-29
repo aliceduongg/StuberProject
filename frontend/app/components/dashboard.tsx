@@ -217,9 +217,13 @@ export function Dashboard() {
           <CardContent>
             {rides
               .filter((ride) => ride.status !== "rejected")
-              .map((ride) => (
+              .map((ride, index) => (
                 <div
-                  key={`ride-list-${ride.id}`}
+                  key={
+                    ride.id
+                      ? `ride-list-${ride.id}`
+                      : `ride-list-fallback-${index}`
+                  }
                   className="mb-2 flex items-center justify-between"
                 >
                   <div className="flex items-center">
