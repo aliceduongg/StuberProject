@@ -40,9 +40,9 @@ router.get('/', auth, async (req, res) => {
 });
 
 // Update ride status
-router.put('/:id', auth, async (req, res) => {
+router.put('/:id/:action', auth, async (req, res) => {
   try {
-    const { status } = req.body;
+    const { action } = req.body;
     const ride = await Ride.findById(req.params.id);
 
     if (!ride) {
@@ -53,7 +53,7 @@ router.put('/:id', auth, async (req, res) => {
       return res.status(401).json({ msg: 'Not authorized' });
     }
 
-    ride.status = status;
+    ride.status = action;
     ride.driver = req.user.id;
 
     await ride.save();

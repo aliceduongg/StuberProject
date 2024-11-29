@@ -102,13 +102,15 @@ export function Dashboard() {
       }
 
       const response = await fetch(
-        `http://localhost:8080/api/rides/${rideId}/${action}`,
+        `http://localhost:8080/api/rides/${rideId}`,
         {
           method: "PUT",
           headers: {
             Authorization: `Bearer ${token}`,
             "x-auth-token": token,
+            "Content-Type": "application/json",
           },
+          body: JSON.stringify({ status: action })
         }
       );
 
@@ -126,6 +128,7 @@ export function Dashboard() {
       console.error(`Error ${action}ing ride:`, error);
     }
   };
+
 
   if (!user) return null;
 
