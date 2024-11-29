@@ -23,7 +23,7 @@ router.post('/', auth, async (req, res) => {
   } catch (err) {
     console.error(err.message);
     // res.status(500).send('Server error');
-    res.status(500).json({msg:'Server error'});
+    res.status(500).json({ msg: 'Server error' });
   }
 });
 
@@ -39,15 +39,15 @@ router.get('/', auth, async (req, res) => {
     res.json(ridesWithId);
   } catch (err) {
     console.error(err.message);
-    res.status(500).json({msg:'Server error'});
+    res.status(500).json({ msg: 'Server error' });
   }
 });
 
 // Update ride status
 router.put('/:id/:action', auth, async (req, res) => {
   try {
-    const { action } = req.body;
-    const ride = await Ride.findById(req.params.id);
+    const { id, action } = req.params; // Get action from URL params
+    const ride = await Ride.findById(id);
 
     if (!ride) {
       return res.status(404).json({ msg: 'Ride not found' });
@@ -57,15 +57,19 @@ router.put('/:id/:action', auth, async (req, res) => {
       return res.status(401).json({ msg: 'Not authorized' });
     }
 
-    ride.status = action;
+    // Validate action
+    if (!['accept', 'reject'].includes(action)) {
+      return res.status(400).json({ msg: 'Invalid action' });
+    }
+
+    ride.status = action === 'accept' ? 'accepted' : 'rejected';
     ride.driver = req.user.id;
 
     await ride.save();
     res.json(ride);
   } catch (err) {
     console.error(err.message);
-    // res.status(500).send('Server error');
-    res.status(500).json({msg:'Server error'});
+    res.status(500).json({ msg: 'Server error' });
   }
 });
 

@@ -102,7 +102,7 @@ export function Dashboard() {
       }
 
       const response = await fetch(
-        `http://localhost:8080/api/rides/${rideId}`,
+        `http://localhost:8080/api/rides/${rideId}/${action}`, // Updated URL
         {
           method: "PUT",
           headers: {
@@ -110,7 +110,7 @@ export function Dashboard() {
             "x-auth-token": token,
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ status: action }),
+          body: JSON.stringify({ action }), // Updated body
         }
       );
 
