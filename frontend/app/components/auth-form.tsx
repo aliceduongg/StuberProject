@@ -29,26 +29,30 @@ export function AuthForm({ type }: AuthFormProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-  
-    if (!email || !password || (type === "signup" && (!role || !firstName || !lastName))) {
+
+    // Validation checks
+    if (!email || !password || (type === "signup" && (!firstName || !lastName || !role))) {
       setError("Please fill in all the fields.");
       return;
     }
-  
+
     if (!email.includes("@")) {
       setError("Please enter a valid email address.");
       return;
     }
-  
+
     if (password.length < 6) {
       setError("Password must be at least 6 characters long.");
       return;
     }
-  
+
     setError(null);
-  
+
     try {
+      // Determine the correct endpoint based on type
       const endpoint = type === "login" ? "/api/auth/login" : "/api/auth/signup";
+
+      // Send request to the backend
       const response = await fetch(`http://localhost:8080${endpoint}`, {
         method: "POST",
         headers: {
@@ -62,15 +66,24 @@ export function AuthForm({ type }: AuthFormProps) {
           role: type === "signup" ? role : undefined,
         }),
       });
-  
+
+      // Parse the response data
       const data = await response.json();
-      
+
+      // Check if the response is not OK
       if (!response.ok) {
         throw new Error(data.msg || "Something went wrong");
       }
-  
+
+      // Ensure that the response contains the required user fields
+      if (!data.user || !data.user._id) {
+        console.error("User ID is missing in the response from server");
+        throw new Error("User ID is missing in the response from server");
+      }
+
       // Save the user profile to localStorage
       const userProfile = {
+        _id: data.user._id, // Ensure _id is saved
         email: data.user.email,
         firstName: data.user.firstName,
         lastName: data.user.lastName,
@@ -78,13 +91,18 @@ export function AuthForm({ type }: AuthFormProps) {
       };
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(userProfile));
-  
+
+      // Debug log to confirm localStorage values
+      console.log("User saved to localStorage:", localStorage.getItem("user"));
+      console.log("Token saved to localStorage:", localStorage.getItem("token"));
+
+      // Navigate to dashboard after successful login/signup
       router.push("/dashboard");
     } catch (err) {
+      console.error("Error during submission:", err); // Log error to console for debugging
       setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
     }
   };
-  
 
   return (
     <Card className="w-[350px]">
@@ -170,3 +188,4 @@ export function AuthForm({ type }: AuthFormProps) {
     </Card>
   );
 }
+

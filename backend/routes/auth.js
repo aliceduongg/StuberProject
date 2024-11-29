@@ -30,7 +30,7 @@ router.post('/signup', async (req, res) => {
 
     const payload = {
       user: {
-        id: user.id,
+        id: user.id, 
         role: user.role
       }
     };
@@ -44,8 +44,11 @@ router.post('/signup', async (req, res) => {
         res.json({
           token,
           user: {
+            _id: user._id,  
+            firstName: user.firstName,
+            lastName: user.lastName,
             email: user.email,
-            role: user.role
+            role: user.role,
           }
         });
       }
@@ -55,6 +58,7 @@ router.post('/signup', async (req, res) => {
     res.status(500).json({ msg: 'Server error' });
   }
 });
+
 
 // Login
 router.post('/login', async (req, res) => {
@@ -73,7 +77,7 @@ router.post('/login', async (req, res) => {
 
     const payload = {
       user: {
-        id: user.id,
+        id: user.id, 
         role: user.role,
       },
     };
@@ -83,16 +87,19 @@ router.post('/login', async (req, res) => {
       res.json({ 
         token,
         user: {
+          _id: user._id,  
+          firstName: user.firstName,
+          lastName: user.lastName,
           email: user.email,
-          role: user.role
+          role: user.role,
         }
       });
     });
   } catch (err) {
     console.error(err.message);
-    // res.status(500).send('Server error');
-    res.status(500).json({msg:'Server error'});
+    res.status(500).json({ msg: 'Server error' });
   }
 });
+
 
 module.exports = router;
