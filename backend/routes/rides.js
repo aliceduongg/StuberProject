@@ -43,6 +43,27 @@ router.get('/', auth, async (req, res) => {
   }
 });
 
+// Get accepted rides for a specific driver
+router.get('/accepted', auth, async (req, res) => {
+  try {
+    if (req.user.role !== 'driver') {
+      return res.status(401).json({ msg: 'Not authorized' });
+    }
+
+    const rides = await Ride.find({ driver: req.user.id, status: 'accepted' }).sort({ date: -1 });
+    // Transform the rides to include id
+    const ridesWithId = rides.map((ride) => ({
+      ...ride.toObject(),
+      id: ride._id,
+    }));
+    res.json(ridesWithId);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ msg: 'Server error' });
+  }
+});
+
+
 // Update ride status
 router.put('/:id/:action', auth, async (req, res) => {
   try {
