@@ -110,7 +110,7 @@ export function Dashboard() {
             "x-auth-token": token,
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ status: action })
+          body: JSON.stringify({ status: action }),
         }
       );
 
@@ -128,7 +128,6 @@ export function Dashboard() {
       console.error(`Error ${action}ing ride:`, error);
     }
   };
-
 
   if (!user) return null;
 
@@ -232,8 +231,8 @@ export function Dashboard() {
                   <div className="flex items-center">
                     <Car className="text-pastel-blue mr-2" />
                     <span>
-                      Destination: {ride.destination} - Date: {ride.date} -
-                      Time: {ride.time} -
+                      From: {ride.pickupLocation} - To: {ride.destination} -
+                      Date: {ride.date} - Time: {ride.time} -
                       <span className="ml-2">
                         <DollarSign className="inline h-4 w-4 text-pastel-blue" />
                         {ride.fare}
