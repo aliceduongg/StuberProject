@@ -30,6 +30,8 @@ app.get("/api/home", (req, res) => {
 // Routes
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/rides', require('./routes/rides'));
+app.use('/api/profile', require('./routes/profile'));
+
 
 // Start server
 const PORT = process.env.PORT || 8080;
