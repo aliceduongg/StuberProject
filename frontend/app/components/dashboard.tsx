@@ -29,7 +29,7 @@ type User = {
 };
 
 type Ride = {
-  id: number;
+  id: string;
   destination: string;
   pickupLocation: string;
   passengers: number;
@@ -92,7 +92,7 @@ export function Dashboard() {
   };
 
   const handleRideAction = async (
-    rideId: number,
+    rideId: string,
     action: "accept" | "reject"
   ) => {
     try {
@@ -110,7 +110,7 @@ export function Dashboard() {
             "x-auth-token": token,
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ action }), // Updated body
+          // body: JSON.stringify({ action }), // Updated body
         }
       );
 
