@@ -151,7 +151,7 @@ export function Dashboard() {
                 .filter((ride) => ride.status === "pending")
                 .map((ride) => (
                   <Card
-                    key={ride.id}
+                    key={`ride-card-${ride.id}`}
                     className="mt-4 bg-white bg-opacity-80 backdrop-blur-md border-pastel-yellow"
                   >
                     <CardContent className="p-4">
@@ -219,7 +219,7 @@ export function Dashboard() {
               .filter((ride) => ride.status !== "rejected")
               .map((ride) => (
                 <div
-                  key={ride.id}
+                  key={`ride-list-${ride.id}`}
                   className="mb-2 flex items-center justify-between"
                 >
                   <div className="flex items-center">
