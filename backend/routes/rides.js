@@ -31,10 +31,14 @@ router.post('/', auth, async (req, res) => {
 router.get('/', auth, async (req, res) => {
   try {
     const rides = await Ride.find().sort({ date: -1 });
-    res.json(rides);
+    // Transform the rides to include id
+    const ridesWithId = rides.map(ride => ({
+      ...ride.toObject(),
+      id: ride._id
+    }));
+    res.json(ridesWithId);
   } catch (err) {
     console.error(err.message);
-    // res.status(500).send('Server error');
     res.status(500).json({msg:'Server error'});
   }
 });
