@@ -65,8 +65,12 @@ router.put('/:id/:action', auth, async (req, res) => {
     ride.status = action === 'accept' ? 'accepted' : 'rejected';
     ride.driver = req.user.id;
 
-    await ride.save();
-    res.json(ride);
+    const updatedRide = await ride.save();
+    // Transform the response to match frontend expectations
+    res.json({
+      ...updatedRide.toObject(),
+      id: updatedRide._id
+    });
   } catch (err) {
     console.error(err.message);
     res.status(500).json({ msg: 'Server error' });

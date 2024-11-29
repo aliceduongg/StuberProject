@@ -71,8 +71,10 @@ export function Dashboard() {
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
+    console.log("Token:", localStorage.getItem("token"));
     if (storedUser) {
       setUser(JSON.parse(storedUser));
+      
     } else {
       router.push("/login");
     }
@@ -96,6 +98,12 @@ export function Dashboard() {
     action: "accept" | "reject"
   ) => {
     try {
+      console.log("Attempting to", action, "ride:", rideId);
+      setRides((prevRides) =>
+        prevRides.map((ride) =>
+          ride.id === rideId ? { ...ride, status: action === 'accept' ? 'accepted' : 'rejected' } : ride
+        )
+      );  
       const token = localStorage.getItem("token");
       if (!token) {
         throw new Error("No authentication token found");
