@@ -23,32 +23,39 @@ export function AuthForm({ type }: AuthFormProps) {
   const [password, setPassword] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
+  const [phone, setPhone] = useState("");
   const [role, setRole] = useState("rider");
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-  
-    if (!email || !password || (type === "signup" && (!role || !firstName || !lastName))) {
+
+    if (
+      !email ||
+      !password ||
+      !phone ||
+      (type === "signup" && (!role || !firstName || !lastName))
+    ) {
       setError("Please fill in all the fields.");
       return;
     }
-  
+
     if (!email.includes("@")) {
       setError("Please enter a valid email address.");
       return;
     }
-  
+
     if (password.length < 6) {
       setError("Password must be at least 6 characters long.");
       return;
     }
-  
+
     setError(null);
-  
+
     try {
-      const endpoint = type === "login" ? "/api/auth/login" : "/api/auth/signup";
+      const endpoint =
+        type === "login" ? "/api/auth/login" : "/api/auth/signup";
       const response = await fetch(`http://localhost:8080${endpoint}`, {
         method: "POST",
         headers: {
@@ -62,13 +69,13 @@ export function AuthForm({ type }: AuthFormProps) {
           role: type === "signup" ? role : undefined,
         }),
       });
-  
+
       const data = await response.json();
-  
+
       if (!response.ok) {
         throw new Error(data.msg || "Something went wrong");
       }
-  
+
       // Store token and user information including userId
       localStorage.setItem("token", data.token);
       localStorage.setItem(
@@ -82,20 +89,24 @@ export function AuthForm({ type }: AuthFormProps) {
           phone: data.user.phone,
         })
       );
-  
+
       router.push("/dashboard");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Something went wrong. Please try again."
+      );
     }
   };
-  
 
   return (
     <Card className="w-[350px]">
       <CardHeader>
         <CardTitle>{type === "login" ? "Login" : "Sign Up"}</CardTitle>
         <CardDescription>
-          Enter your details to {type === "login" ? "login" : "create an account"}.
+          Enter your details to{" "}
+          {type === "login" ? "login" : "create an account"}.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -163,11 +174,15 @@ export function AuthForm({ type }: AuthFormProps) {
           <div className="flex justify-between mt-4">
             <Button
               variant="outline"
-              onClick={() => router.push(type === "login" ? "/signup" : "/login")}
+              onClick={() =>
+                router.push(type === "login" ? "/signup" : "/login")
+              }
             >
               {type === "login" ? "Sign Up" : "Login"}
             </Button>
-            <Button type="submit">{type === "login" ? "Login" : "Sign Up"}</Button>
+            <Button type="submit">
+              {type === "login" ? "Login" : "Sign Up"}
+            </Button>
           </div>
         </form>
       </CardContent>
