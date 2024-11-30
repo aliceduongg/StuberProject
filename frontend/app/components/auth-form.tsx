@@ -41,6 +41,12 @@ export function AuthForm({ type }: AuthFormProps) {
       return;
     }
 
+    const phoneRegex = /^\+?[\d\s-]{10,}$/;
+    if (!phoneRegex.test(phone)) {
+      setError("Please enter a valid phone number.");
+      return;
+    }
+
     if (!email.includes("@")) {
       setError("Please enter a valid email address.");
       return;
