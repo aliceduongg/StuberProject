@@ -140,6 +140,17 @@ export function AuthForm({ type }: AuthFormProps) {
               </>
             )}
             <div className="flex flex-col space-y-1.5">
+              <Label htmlFor="phone">Phone Number</Label>
+              <Input
+                id="phone"
+                type="tel"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                required
+                placeholder="+1 234 567 8900"
+              />
+            </div>
+            <div className="flex flex-col space-y-1.5">
               <Label htmlFor="email">Email</Label>
               <Input
                 id="email"
