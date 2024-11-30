@@ -1,6 +1,8 @@
 # dependencies
 /node_modules
-
+.gitignore
 
 # env files (can opt-in for committing if needed)
 .env*
+.env
+node_modules/
