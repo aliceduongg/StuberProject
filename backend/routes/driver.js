@@ -4,7 +4,6 @@ const auth = require('../middleware/auth');
 const User = require('../models/User');
 const multer = require('multer');
 
-// Configure multer storage
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, 'uploads/')
@@ -14,7 +13,6 @@ const storage = multer.diskStorage({
     }
 });
 
-// Configure multer for file uploads
 const upload = multer({
     storage: storage,
     limits: {
@@ -47,7 +45,6 @@ router.post('/information',
                 return res.status(404).json({ msg: 'User not found' });
             }
 
-            // Update user with driver information
             user.driverLicense = req.files.driverLicense[0].path;
             user.vehicleImage = req.files.vehicleImage[0].path;
             user.licensePlateNumber = req.body.licensePlate;

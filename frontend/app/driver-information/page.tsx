@@ -28,7 +28,6 @@ export default function DriverInformation() {
   ) => {
     const file = e.target.files?.[0] || null;
     if (file) {
-      // Validate file type
       const validTypes = ["image/jpeg", "image/png", "application/pdf"];
       if (!validTypes.includes(file.type)) {
         setError(
@@ -36,7 +35,6 @@ export default function DriverInformation() {
         );
         return;
       }
-      // Validate file size (5MB limit)
       if (file.size > 5 * 1024 * 1024) {
         setError("File size exceeds 5MB limit.");
         return;
@@ -52,12 +50,10 @@ export default function DriverInformation() {
     setIsSubmitting(true);
 
     try {
-      // Validate all required fields
       if (!driverLicense || !vehicleImage || !licensePlate.trim()) {
         throw new Error("Please provide all required information");
       }
 
-      // Validate license plate format (basic example - adjust as needed)
       const licensePlateRegex = /^[A-Z0-9]{5,8}$/;
       if (!licensePlateRegex.test(licensePlate.toUpperCase())) {
         throw new Error("Invalid license plate format");
