@@ -53,7 +53,7 @@ export function Dashboard() {
 
       const response = await fetch("http://localhost:8080/api/rides", {
         headers: {
-          Authorization: `Bearer ${token}`,
+          // Authorization: `Bearer ${token}`,
           "x-auth-token": token,
         },
       });
@@ -74,7 +74,6 @@ export function Dashboard() {
     console.log("Token:", localStorage.getItem("token"));
     if (storedUser) {
       setUser(JSON.parse(storedUser));
-      
     } else {
       router.push("/login");
     }
@@ -98,27 +97,19 @@ export function Dashboard() {
     action: "accept" | "reject"
   ) => {
     try {
-      console.log("Attempting to", action, "ride:", rideId);
-      setRides((prevRides) =>
-        prevRides.map((ride) =>
-          ride.id === rideId ? { ...ride, status: action === 'accept' ? 'accepted' : 'rejected' } : ride
-        )
-      );  
       const token = localStorage.getItem("token");
       if (!token) {
         throw new Error("No authentication token found");
       }
 
       const response = await fetch(
-        `http://localhost:8080/api/rides/${rideId}/${action}`, // Updated URL
+        `http://localhost:8080/api/rides/${rideId}/${action}`,
         {
           method: "PUT",
           headers: {
-            Authorization: `Bearer ${token}`,
             "x-auth-token": token,
             "Content-Type": "application/json",
           },
-          // body: JSON.stringify({ action }), // Updated body
         }
       );
 
@@ -134,6 +125,9 @@ export function Dashboard() {
       );
     } catch (error) {
       console.error(`Error ${action}ing ride:`, error);
+      if (error instanceof Error && error.message.includes("401")) {
+        router.push("/login");
+      }
     }
   };
 
