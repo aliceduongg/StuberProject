@@ -29,24 +29,24 @@ export function AuthForm({ type }: AuthFormProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
+  
     if (!email || !password || (type === "signup" && (!role || !firstName || !lastName))) {
       setError("Please fill in all the fields.");
       return;
     }
-
+  
     if (!email.includes("@")) {
       setError("Please enter a valid email address.");
       return;
     }
-
+  
     if (password.length < 6) {
       setError("Password must be at least 6 characters long.");
       return;
     }
-
+  
     setError(null);
-
+  
     try {
       const endpoint = type === "login" ? "/api/auth/login" : "/api/auth/signup";
       const response = await fetch(`http://localhost:8080${endpoint}`, {
@@ -62,22 +62,33 @@ export function AuthForm({ type }: AuthFormProps) {
           role: type === "signup" ? role : undefined,
         }),
       });
-
+  
       const data = await response.json();
-      
+  
       if (!response.ok) {
         throw new Error(data.msg || "Something went wrong");
       }
+  
+      // Store token and user information including userId
       localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify({
-        email: data.user.email,
-        role: data.user.role
-      }));
+      localStorage.setItem(
+        "user",
+        JSON.stringify({
+          id: data.user._id, // Store the user ID(update)
+          email: data.user.email,
+          role: data.user.role,
+          firstName: data.user.firstName,
+          lastName: data.user.lastName,
+          phone: data.user.phone,
+        })
+      );
+  
       router.push("/dashboard");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
     }
   };
+  
 
   return (
     <Card className="w-[350px]">

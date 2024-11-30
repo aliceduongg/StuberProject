@@ -1,39 +1,75 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { User, FileText, Users, Car } from 'lucide-react'
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { User, FileText, Phone } from 'lucide-react';
 
 export function Profile() {
-  const [user, setUser] = useState<any>(null)
-  const [name, setName] = useState('')
-  const [bio, setBio] = useState('')
-  const router = useRouter()
+  const [user, setUser] = useState<any>(null);
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [phone, setPhone] = useState('');
+  const router = useRouter();
 
   useEffect(() => {
-    const storedUser = localStorage.getItem('user')
+    const storedUser = localStorage.getItem('user');
     if (storedUser) {
-      const parsedUser = JSON.parse(storedUser)
-      setUser(parsedUser)
-      setName(parsedUser.name || '')
-      setBio(parsedUser.bio || '')
+      const parsedUser = JSON.parse(storedUser);
+      console.log('Retrieved user from local storage:', parsedUser); // Debug log to check user data
+      setUser(parsedUser);
+      if (parsedUser.id) {
+        fetchUserProfile(parsedUser.id);
+      }
     } else {
-      router.push('/login')
+      router.push('/login');
     }
-  }, [router])
+  }, [router]);
 
-  const handleUpdateProfile = () => {
-    const updatedUser = { ...user, name, bio }
-    localStorage.setItem('user', JSON.stringify(updatedUser))
-    setUser(updatedUser)
-    alert('Profile updated successfully!')
-  }
+  const fetchUserProfile = async (userId: string) => {
+    try {
+      const response = await fetch(`http://localhost:8080/api/auth/profile/${userId}`);
+      if (response.ok) {
+        const data = await response.json();
+        console.log('Fetched user profile:', data); // Debug log to check fetched data
+        setFirstName(data.firstName || '');
+        setLastName(data.lastName || '');
+        setPhone(data.phone || '');
+      } else {
+        console.error('Failed to retrieve user data.');
+      }
+    } catch (error) {
+      console.error('Failed to fetch user profile:', error);
+    }
+  };
 
-  if (!user) return null
+  const handleUpdateProfile = async () => {
+    try {
+      const updatedUser = { ...user, firstName, lastName, phone };
+      const response = await fetch('http://localhost:8080/api/auth/profile', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ userId: user.id, firstName, lastName, phone }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update profile');
+      }
+
+      localStorage.setItem('user', JSON.stringify(updatedUser));
+      setUser(updatedUser);
+      alert('Profile updated successfully!');
+    } catch (error) {
+      alert('Failed to update profile. Please try again.');
+    }
+  };
+
+  if (!user) return null;
 
   return (
     <Card className="w-[350px] bg-white bg-opacity-80 backdrop-blur-md border-pastel-blue">
@@ -48,25 +84,23 @@ export function Profile() {
         <form onSubmit={(e) => e.preventDefault()}>
           <div className="grid w-full items-center gap-4">
             <div className="flex flex-col space-y-1.5">
-              <Label htmlFor="name" className="text-pastel-blue">Name</Label>
+              <Label htmlFor="firstName" className="text-pastel-blue">First Name</Label>
+              <Input id="firstName" value={firstName} onChange={(e) => setFirstName(e.target.value)} className="flex-grow border-pastel-blue" />
+            </div>
+            <div className="flex flex-col space-y-1.5">
+              <Label htmlFor="lastName" className="text-pastel-blue">Last Name</Label>
+              <Input id="lastName" value={lastName} onChange={(e) => setLastName(e.target.value)} className="flex-grow border-pastel-blue" />
+            </div>
+            <div className="flex flex-col space-y-1.5">
+              <Label htmlFor="phone" className="text-pastel-blue">Phone</Label>
               <div className="flex items-center">
-                <User className="text-pastel-blue mr-2" />
-                <Input id="name" value={name} onChange={(e) => setName(e.target.value)} className="flex-grow border-pastel-blue" />
+                <Phone className="text-pastel-blue mr-2" />
+                <Input id="phone" value={phone} onChange={(e) => setPhone(e.target.value)} className="flex-grow border-pastel-blue" />
               </div>
             </div>
             <div className="flex flex-col space-y-1.5">
-              <Label htmlFor="bio" className="text-pastel-blue">Bio</Label>
-              <div className="flex items-center">
-                <FileText className="text-pastel-blue mr-2" />
-                <Input id="bio" value={bio} onChange={(e) => setBio(e.target.value)} className="flex-grow border-pastel-blue" />
-              </div>
-            </div>
-            <div className="flex flex-col space-y-1.5">
-              <Label htmlFor="role" className="text-pastel-blue">Role</Label>
-              <div className="flex items-center">
-                {user.role === 'rider' ? <Users className="text-pastel-blue mr-2" /> : <Car className="text-pastel-blue mr-2" />}
-                <Input id="role" value={user.role} disabled className="flex-grow border-pastel-blue bg-gray-100" />
-              </div>
+              <Label htmlFor="email" className="text-pastel-blue">Email</Label>
+              <Input id="email" value={user.email} disabled className="flex-grow border-pastel-blue bg-gray-100" />
             </div>
           </div>
         </form>
@@ -77,6 +111,8 @@ export function Profile() {
         </Button>
       </CardFooter>
     </Card>
-  )
+  );
 }
+
+
 
