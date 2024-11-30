@@ -1,4 +1,4 @@
-const nodeMailer = require('nodemailer');
+const nodemailer = require('nodemailer');
 
 const transporter = nodemailer.createTransport({
     service: 'gmail',
@@ -10,7 +10,7 @@ const transporter = nodemailer.createTransport({
 
 const sendRideNotification = async (driverEmail, rideDetails) => {
     const mailOptions = {
-        from: '', // email
+        from: process.env.EMAIL_USER, // email
         to: driverEmail,
         subject: 'New Ride Request Available!',
         html: `
