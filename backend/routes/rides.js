@@ -36,6 +36,7 @@ router.post('/', auth, async (req, res) => {
         date,
         time,
         fare,
+        passengers,
       });
     }
 
