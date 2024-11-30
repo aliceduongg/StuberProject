@@ -1,6 +1,7 @@
 const express = require('express');
 const Ride = require('../models/Ride');
 const auth = require('../middleware/auth');
+const User = require('../models/User');
 const { sendRideNotification } = require('../utils/emailService');
 
 const router = express.Router();
@@ -26,7 +27,7 @@ router.post('/', auth, async (req, res) => {
       role: 'driver',
       notificationsEnabled: true
     });
-    
+
     // Send notification to all drivers
     for (const driver of drivers) {
       await sendRideNotification(driver.email, {

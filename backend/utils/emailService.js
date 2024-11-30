@@ -4,7 +4,8 @@ const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
         user: process.env.EMAIL_USER, // email
-        pass: process.env.EMAIL_PASS ,
+        pass: process.env.EMAIL_PASS,
+
     }
 });
 
@@ -31,8 +32,10 @@ const sendRideNotification = async (driverEmail, rideDetails) => {
     try {
         await transporter.sendMail(mailOptions);
         console.log(`Notification email sent to ${driverEmail}`);
+        return true;
     } catch (error) {
         console.error('Error sending email:', error);
+        throw error; // Propagate the error
     }
 };
 
