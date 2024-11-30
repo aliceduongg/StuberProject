@@ -7,6 +7,7 @@ const userSchema = new mongoose.Schema({
   firstName: { type: String, required: true },  // Changed from name
   lastName: { type: String, required: true },   // Added lastName
   role: { type: String, enum: ['rider', 'driver'], required: true },
+  notificationsEnabled: { type: Boolean, default: true }
 });
 
 module.exports = mongoose.model('User', userSchema);
