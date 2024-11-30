@@ -42,16 +42,60 @@ type Ride = {
 export function Dashboard() {
   const [user, setUser] = useState<User | null>(null);
   const [rides, setRides] = useState<Ride[]>([]);
+  const [acceptedRides, setAcceptedRides] = useState<Ride[]>([]);
   const router = useRouter();
 
+  // Fetch rides booked by the rider or available rides for the driver
   const fetchRides = useCallback(async () => {
     try {
       const token = localStorage.getItem("token");
       if (!token) {
         throw new Error("No authentication token found");
       }
+  
+      let response: Response | undefined;
+  
+      if (user?.role === "rider") {
+        // Fetch rides specific to this rider
+        response = await fetch("http://localhost:8080/api/rides/rider", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "x-auth-token": token,
+          },
+        });
+      } else if (user?.role === "driver") {
+        // Fetch all available rides (for drivers)
+        response = await fetch("http://localhost:8080/api/rides/available", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "x-auth-token": token,
+          },
+        });
+      }
+  
+      if (!response || !response.ok) {
+        throw new Error("Failed to fetch rides");
+      }
+  
+      const data = await response.json();
+      setRides(data);
+    } catch (error) {
+      console.error("Error fetching rides:", error);
+    }
+  }, [user]);
+  
 
-      const response = await fetch("http://localhost:8080/api/rides", {
+  // Fetch accepted rides for the driver
+  const fetchAcceptedRides = useCallback(async () => {
+    try {
+      if (user?.role !== "driver") return;
+
+      const token = localStorage.getItem("token");
+      if (!token) {
+        throw new Error("No authentication token found");
+      }
+
+      const response = await fetch("http://localhost:8080/api/rides/driver/accepted", {
         headers: {
           Authorization: `Bearer ${token}`,
           "x-auth-token": token,
@@ -59,28 +103,40 @@ export function Dashboard() {
       });
 
       if (!response.ok) {
-        throw new Error("Failed to fetch rides");
+        throw new Error("Failed to fetch accepted rides");
       }
 
       const data = await response.json();
-      setRides(data);
+      setAcceptedRides(data);
     } catch (error) {
-      console.error("Error fetching rides:", error);
+      console.error("Error fetching accepted rides:", error);
     }
-  }, []);
+  }, [user]);
 
+  // Effect to load user information and fetch rides
+  // Effect to load user information from local storage
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
-    console.log("Token:", localStorage.getItem("token"));
     if (storedUser) {
-      setUser(JSON.parse(storedUser));
-      
+      const parsedUser = JSON.parse(storedUser);
+      setUser(parsedUser);
     } else {
       router.push("/login");
     }
+  }, [router]);
 
-    fetchRides();
-  }, [router, fetchRides]);
+  // Effect to fetch rides after user information is set
+  useEffect(() => {
+    if (user) {
+      if (user.role === "driver") {
+        fetchRides(); // Fetch available rides for driver
+        fetchAcceptedRides(); // Fetch accepted rides for driver
+      } else if (user.role === "rider") {
+        fetchRides(); // Fetch booked rides for rider
+      }
+    }
+  }, [user, fetchRides, fetchAcceptedRides]);
+
 
   const handleLogout = () => {
     localStorage.removeItem("user");
@@ -93,24 +149,16 @@ export function Dashboard() {
     setRides((prevRides) => [...prevRides, newRide]);
   };
 
-  const handleRideAction = async (
-    rideId: string,
-    action: "accept" | "reject"
-  ) => {
+  const handleRideAction = async (rideId: string, action: "accept" | "reject") => {
     try {
       console.log("Attempting to", action, "ride:", rideId);
-      setRides((prevRides) =>
-        prevRides.map((ride) =>
-          ride.id === rideId ? { ...ride, status: action === 'accept' ? 'accepted' : 'rejected' } : ride
-        )
-      );  
       const token = localStorage.getItem("token");
       if (!token) {
         throw new Error("No authentication token found");
       }
 
       const response = await fetch(
-        `http://localhost:8080/api/rides/${rideId}/${action}`, // Updated URL
+        `http://localhost:8080/api/rides/${rideId}/${action}`,
         {
           method: "PUT",
           headers: {
@@ -118,7 +166,6 @@ export function Dashboard() {
             "x-auth-token": token,
             "Content-Type": "application/json",
           },
-          // body: JSON.stringify({ action }), // Updated body
         }
       );
 
@@ -127,11 +174,15 @@ export function Dashboard() {
       }
 
       const updatedRide = await response.json();
+
+      // Update state accordingly
       setRides((prevRides) =>
-        prevRides.map((ride) =>
-          ride.id === updatedRide.id ? updatedRide : ride
-        )
+        prevRides.filter((ride) => ride.id !== rideId)
       );
+
+      if (action === "accept") {
+        setAcceptedRides((prevAcceptedRides) => [...prevAcceptedRides, updatedRide]);
+      }
     } catch (error) {
       console.error(`Error ${action}ing ride:`, error);
     }
@@ -219,45 +270,26 @@ export function Dashboard() {
           </Button>
         </CardFooter>
       </Card>
-      {user.role === "rider" && rides.length > 0 && (
+      {user.role === "driver" && acceptedRides.length > 0 && (
         <Card className="mt-4 bg-white bg-opacity-80 backdrop-blur-md border-pastel-blue">
           <CardHeader>
-            <CardTitle className="text-pastel-blue">Your Rides</CardTitle>
+            <CardTitle className="text-pastel-blue">Accepted Rides</CardTitle>
           </CardHeader>
           <CardContent>
-            {rides
-              .filter((ride) => ride.status !== "rejected")
-              .map((ride, index) => (
-                <div
-                  key={
-                    ride.id
-                      ? `ride-list-${ride.id}`
-                      : `ride-list-fallback-${index}`
-                  }
-                  className="mb-2 flex items-center justify-between"
-                >
-                  <div className="flex items-center">
-                    <Car className="text-pastel-blue mr-2" />
-                    <span>
-                      From: {ride.pickupLocation} - To: {ride.destination} -
-                      Date: {ride.date} - Time: {ride.time} -
-                      <span className="ml-2">
-                        <DollarSign className="inline h-4 w-4 text-pastel-blue" />
-                        {ride.fare}
-                      </span>
-                    </span>
-                  </div>
-                  <span
-                    className={`font-semibold ${
-                      ride.status === "accepted"
-                        ? "text-green-600"
-                        : "text-yellow-600"
-                    }`}
-                  >
-                    {ride.status.charAt(0).toUpperCase() + ride.status.slice(1)}
+            {acceptedRides.map((ride) => (
+              <div
+                key={`accepted-ride-${ride.id}`}
+                className="mb-2 flex items-center justify-between"
+              >
+                <div className="flex items-center">
+                  <Car className="text-pastel-blue mr-2" />
+                  <span>
+                    From: {ride.pickupLocation} - To: {ride.destination} - Date:{" "}
+                    {ride.date} - Time: {ride.time} - Fare: ${ride.fare}
                   </span>
                 </div>
-              ))}
+              </div>
+            ))}
           </CardContent>
         </Card>
       )}

@@ -77,74 +77,51 @@ router.put('/:id/:action', auth, async (req, res) => {
   }
 });
 
-// Get rides booked by a specific rider
-router.get('/rider', auth, async (req, res) => {
-  try {
-    if (req.user.role !== 'rider') {
-      return res.status(401).json({ msg: 'Not authorized' });
-    }
-
-    // Get rides where the rider is the currently authenticated user
-    const rides = await Ride.find({ rider: req.user.id }).sort({ date: -1 });
-
-    // Transform the rides to include id
-    const ridesWithId = rides.map(ride => ({
-      ...ride.toObject(),
-      id: ride._id,
-    }));
-
-    res.json(ridesWithId);
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).json({ msg: 'Server error' });
-  }
-});
-
 // Get available rides for drivers
 router.get('/available', auth, async (req, res) => {
-  try {
-    if (req.user.role !== 'driver') {
-      return res.status(401).json({ msg: 'Not authorized' });
+    try {
+      if (req.user.role !== 'driver') {
+        return res.status(401).json({ msg: 'Not authorized' });
+      }
+  
+      // Get rides that are still pending (not accepted by anyone)
+      const rides = await Ride.find({ status: 'pending' }).sort({ date: -1 });
+  
+      // Transform the rides to include id
+      const ridesWithId = rides.map(ride => ({
+        ...ride.toObject(),
+        id: ride._id,
+      }));
+  
+      res.json(ridesWithId);
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).json({ msg: 'Server error' });
     }
-
-    // Get rides that are still pending (not accepted by anyone)
-    const rides = await Ride.find({ status: 'pending' }).sort({ date: -1 });
-
-    // Transform the rides to include id
-    const ridesWithId = rides.map(ride => ({
-      ...ride.toObject(),
-      id: ride._id,
-    }));
-
-    res.json(ridesWithId);
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).json({ msg: 'Server error' });
-  }
-});
-
-// Get accepted rides for a specific driver
-router.get('/driver/accepted', auth, async (req, res) => {
-  try {
-    if (req.user.role !== 'driver') {
-      return res.status(401).json({ msg: 'Not authorized' });
+  });
+  
+  // Get accepted rides for a specific driver
+  router.get('/driver/accepted', auth, async (req, res) => {
+    try {
+      if (req.user.role !== 'driver') {
+        return res.status(401).json({ msg: 'Not authorized' });
+      }
+  
+      // Get rides where the driver is the currently authenticated user and the status is 'accepted'
+      const rides = await Ride.find({ driver: req.user.id, status: 'accepted' }).sort({ date: -1 });
+  
+      // Transform the rides to include id
+      const ridesWithId = rides.map(ride => ({
+        ...ride.toObject(),
+        id: ride._id,
+      }));
+  
+      res.json(ridesWithId);
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).json({ msg: 'Server error' });
     }
+  });
 
-    // Get rides where the driver is the currently authenticated user and the status is 'accepted'
-    const rides = await Ride.find({ driver: req.user.id, status: 'accepted' }).sort({ date: -1 });
-
-    // Transform the rides to include id
-    const ridesWithId = rides.map(ride => ({
-      ...ride.toObject(),
-      id: ride._id,
-    }));
-
-    res.json(ridesWithId);
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).json({ msg: 'Server error' });
-  }
-});
-
-
-module.exports = router;
+  
+  module.exports = router;
