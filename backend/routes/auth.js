@@ -8,7 +8,7 @@ const router = express.Router();
 // Register
 router.post('/signup', async (req, res) => {
   try {
-    const { email, password, firstName, lastName, role } = req.body;
+    const { email, password, firstName, lastName, phone, role } = req.body;
 
     let user = await User.findOne({ email });
     if (user) {
@@ -20,7 +20,8 @@ router.post('/signup', async (req, res) => {
       password,
       firstName,
       lastName,
-      role
+      role,
+      phone,
     });
 
     const salt = await bcrypt.genSalt(10);
@@ -45,7 +46,10 @@ router.post('/signup', async (req, res) => {
           token,
           user: {
             email: user.email,
-            role: user.role
+            role: user.role,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            phone: user.phone  // Add this line
           }
         });
       }
@@ -80,7 +84,7 @@ router.post('/login', async (req, res) => {
 
     jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' }, (err, token) => {
       if (err) throw err;
-      res.json({ 
+      res.json({
         token,
         user: {
           email: user.email,
@@ -91,7 +95,7 @@ router.post('/login', async (req, res) => {
   } catch (err) {
     console.error(err.message);
     // res.status(500).send('Server error');
-    res.status(500).json({msg:'Server error'});
+    res.status(500).json({ msg: 'Server error' });
   }
 });
 
