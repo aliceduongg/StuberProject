@@ -5,6 +5,7 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const mongoose = require('mongoose'); // Make sure you import mongoose
 const { error } = require('console');
+const path = require('path');
 
 
 // to access .env file
@@ -27,11 +28,14 @@ app.get("/api/home", (req, res) => {
 }
 );
 
+// Serve static files from uploads directory
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 // Routes
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/rides', require('./routes/rides'));
 app.use('/api/profile', require('./routes/profile'));
-
+app.use('/api/driver', require('./routes/driver')); 
 
 // Start server
 const PORT = process.env.PORT || 8080;

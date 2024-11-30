@@ -10,9 +10,19 @@ const userSchema = new mongoose.Schema({
   role: { type: String, enum: ['rider', 'driver'], required: true },
   notificationsEnabled: { type: Boolean, default: true },
   // New fields for drivers
-  driverLicense: { type: String }, // File path/URL
-  vehicleImage: { type: String }, // File path/URL
-  licensePlateNumber: { type: String },
+  driverLicense: {
+    type: String,
+    required: false
+  },
+  vehicleImage: {
+    type: String,
+    required: false
+  },
+  licensePlateNumber: {
+    type: String,
+    required: false
+  },
+
   isDriverVerified: { type: Boolean, default: false }
 });
 

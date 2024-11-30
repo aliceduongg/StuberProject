@@ -4,8 +4,19 @@ const auth = require('../middleware/auth');
 const User = require('../models/User');
 const multer = require('multer');
 
+// Configure multer storage
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'uploads/')
+    },
+    filename: function (req, file, cb) {
+        cb(null, Date.now() + '-' + file.originalname)
+    }
+});
+
 // Configure multer for file uploads
 const upload = multer({
+    storage: storage,
     limits: {
         fileSize: 5 * 1024 * 1024, // 5MB limit
     },
@@ -27,7 +38,10 @@ router.post('/information',
     ]),
     async (req, res) => {
         try {
-            // Handle file uploads and update user record
+            if (!req.files || !req.files.driverLicense || !req.files.vehicleImage) {
+                return res.status(400).json({ msg: 'Please upload all required files' });
+            }
+
             const user = await User.findById(req.user.id);
             if (!user) {
                 return res.status(404).json({ msg: 'User not found' });
@@ -40,9 +54,17 @@ router.post('/information',
 
             await user.save();
 
-            res.json({ msg: 'Driver information updated successfully' });
+            res.json({
+                msg: 'Driver information updated successfully',
+                user: {
+                    driverLicense: user.driverLicense,
+                    vehicleImage: user.vehicleImage,
+                    licensePlateNumber: user.licensePlateNumber
+                }
+            });
         } catch (err) {
-            res.status(500).json({ msg: 'Server error' });
+            console.error('Error in driver information upload:', err);
+            res.status(500).json({ msg: 'Server error', error: err.message });
         }
     }
 );
