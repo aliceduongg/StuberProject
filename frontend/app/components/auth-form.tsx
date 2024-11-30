@@ -41,7 +41,7 @@ export function AuthForm({ type }: AuthFormProps) {
       return;
     }
 
-    const phoneRegex = /^\+?[\d\s-]{10,}$/;
+    const phoneRegex = /^\+?[\d\s-]{10,}$/; // Matches phone numbers with spaces, dashes, and country code
     if (!phoneRegex.test(phone)) {
       setError("Please enter a valid phone number.");
       return;
@@ -52,7 +52,7 @@ export function AuthForm({ type }: AuthFormProps) {
       return;
     }
 
-    if (password.length < 6) {
+    if (password.length < 8) {
       setError("Password must be at least 6 characters long.");
       return;
     }
@@ -60,9 +60,7 @@ export function AuthForm({ type }: AuthFormProps) {
     setError(null);
 
     try {
-      const endpoint =
-        type === "login" ? "/api/auth/login" : "/api/auth/signup";
-      const response = await fetch(`http://localhost:8080${endpoint}`, {
+      const response = await fetch(`http://localhost:8080/api/auth/signup`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -72,7 +70,8 @@ export function AuthForm({ type }: AuthFormProps) {
           password,
           firstName,
           lastName,
-          role: type === "signup" ? role : undefined,
+          phone,
+          role,
         }),
       });
 
@@ -82,12 +81,11 @@ export function AuthForm({ type }: AuthFormProps) {
         throw new Error(data.msg || "Something went wrong");
       }
 
-      // Store token and user information including userId
       localStorage.setItem("token", data.token);
       localStorage.setItem(
         "user",
         JSON.stringify({
-          id: data.user._id, // Store the user ID(update)
+          id: data.user._id,
           email: data.user.email,
           role: data.user.role,
           firstName: data.user.firstName,
@@ -96,13 +94,14 @@ export function AuthForm({ type }: AuthFormProps) {
         })
       );
 
-      router.push("/dashboard");
+      // Redirect based on role
+      if (data.user.role === "driver") {
+        router.push("/driver-information");
+      } else {
+        router.push("/dashboard");
+      }
     } catch (err) {
-      setError(
-        err instanceof Error
-          ? err.message
-          : "Something went wrong. Please try again."
-      );
+      setError(err instanceof Error ? err.message : "Something went wrong");
     }
   };
 
