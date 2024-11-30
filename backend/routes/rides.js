@@ -1,6 +1,7 @@
 const express = require('express');
 const Ride = require('../models/Ride');
 const auth = require('../middleware/auth');
+const {sendNotification} = require('../utils/notifications');
 
 const router = express.Router();
 
