@@ -9,7 +9,6 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -31,20 +30,24 @@ export function AuthForm({ type }: AuthFormProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (
-      !email ||
-      !password ||
-      !phone ||
-      (type === "signup" && (!role || !firstName || !lastName))
-    ) {
-      setError("Please fill in all the fields.");
+    // Validation for both login and signup
+    if (!email || !password) {
+      setError("Please fill in all required fields.");
       return;
     }
 
-    const phoneRegex = /^\+?[\d\s-]{10,}$/; // Matches phone numbers with spaces, dashes, and country code
-    if (!phoneRegex.test(phone)) {
-      setError("Please enter a valid phone number.");
-      return;
+    // Additional validation for signup only
+    if (type === "signup") {
+      if (!firstName || !lastName || !phone || !role) {
+        setError("Please fill in all required fields.");
+        return;
+      }
+
+      const phoneRegex = /^\+?[\d\s-]{10,}$/;
+      if (!phoneRegex.test(phone)) {
+        setError("Please enter a valid phone number.");
+        return;
+      }
     }
 
     if (!email.includes("@")) {
@@ -53,14 +56,16 @@ export function AuthForm({ type }: AuthFormProps) {
     }
 
     if (password.length < 8) {
-      setError("Password must be at least 6 characters long.");
+      setError("Password must be at least 8 characters long.");
       return;
     }
 
     setError(null);
 
     try {
-      const response = await fetch(`http://localhost:8080/api/auth/signup`, {
+      // Use different endpoints based on type
+      const endpoint = type === "login" ? "login" : "signup";
+      const response = await fetch(`http://localhost:8080/api/auth/${endpoint}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -68,10 +73,12 @@ export function AuthForm({ type }: AuthFormProps) {
         body: JSON.stringify({
           email,
           password,
-          firstName,
-          lastName,
-          phone,
-          role,
+          ...(type === "signup" && {
+            firstName,
+            lastName,
+            phone,
+            role,
+          }),
         }),
       });
 
@@ -81,6 +88,7 @@ export function AuthForm({ type }: AuthFormProps) {
         throw new Error(data.msg || "Something went wrong");
       }
 
+      // Store user data and token
       localStorage.setItem("token", data.token);
       localStorage.setItem(
         "user",
@@ -110,8 +118,7 @@ export function AuthForm({ type }: AuthFormProps) {
       <CardHeader>
         <CardTitle>{type === "login" ? "Login" : "Sign Up"}</CardTitle>
         <CardDescription>
-          Enter your details to{" "}
-          {type === "login" ? "login" : "create an account"}.
+          Enter your details to {type === "login" ? "login" : "create an account"}.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -137,19 +144,19 @@ export function AuthForm({ type }: AuthFormProps) {
                     required
                   />
                 </div>
+                <div className="flex flex-col space-y-1.5">
+                  <Label htmlFor="phone">Phone Number</Label>
+                  <Input
+                    id="phone"
+                    type="tel"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    required
+                    placeholder="+1 234 567 8900"
+                  />
+                </div>
               </>
             )}
-            <div className="flex flex-col space-y-1.5">
-              <Label htmlFor="phone">Phone Number</Label>
-              <Input
-                id="phone"
-                type="tel"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                required
-                placeholder="+1 234 567 8900"
-              />
-            </div>
             <div className="flex flex-col space-y-1.5">
               <Label htmlFor="email">Email</Label>
               <Input
@@ -190,9 +197,7 @@ export function AuthForm({ type }: AuthFormProps) {
           <div className="flex justify-between mt-4">
             <Button
               variant="outline"
-              onClick={() =>
-                router.push(type === "login" ? "/signup" : "/login")
-              }
+              onClick={() => router.push(type === "login" ? "/signup" : "/login")}
             >
               {type === "login" ? "Sign Up" : "Login"}
             </Button>
