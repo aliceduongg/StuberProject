@@ -74,7 +74,7 @@ export default function DriverInformation() {
         {
           method: "POST",
           headers: {
-            Authorization: `Bearer ${token}`,
+            "x-auth-token": token,
           },
           body: formData,
         }
@@ -85,9 +85,14 @@ export default function DriverInformation() {
         throw new Error(data.msg || "Failed to submit driver information");
       }
 
+      const data = await response.json();
       router.push("/dashboard");
     } catch (err) {
+      console.error("Error submitting driver information:", err);
       setError(err instanceof Error ? err.message : "Something went wrong");
+      if (err instanceof Error && err.message.includes("401")) {
+        router.push("/login");
+      }
     } finally {
       setIsSubmitting(false);
     }
