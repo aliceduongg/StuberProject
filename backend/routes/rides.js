@@ -1,7 +1,7 @@
 const express = require('express');
 const Ride = require('../models/Ride');
 const auth = require('../middleware/auth');
-const {sendNotification} = require('../utils/notifications');
+const { sendNotification } = require('../utils/notifications');
 
 const router = express.Router();
 
@@ -19,8 +19,26 @@ router.post('/', auth, async (req, res) => {
       fare,
     });
 
-    const ride = await newRide.save();
-    res.json(ride);
+    const ride = await newRide.save(); // Save the new ride to the database
+
+    // Find and Send notification to all drivers
+    const drivers = await User.find({
+      role: 'driver',
+      notificationsEnabled: true
+    });
+    
+    // Send notification to all drivers
+    for (const dirver of drivers) {
+      await sendRideNotification(driver.email, {
+        pickupLocation,
+        destination,
+        date,
+        time,
+        fare,
+      });
+    }
+
+    res.json(ride); // Send the ride object as response
   } catch (err) {
     console.error(err.message);
     // res.status(500).send('Server error');
