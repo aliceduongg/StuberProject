@@ -1,6 +1,8 @@
 const express = require('express');
 const Ride = require('../models/Ride');
 const auth = require('../middleware/auth');
+const User = require('../models/User');
+const { sendRideNotification, sendRideAcceptedNotification } = require('../utils/emailService');
 
 const router = express.Router();
 
@@ -18,8 +20,27 @@ router.post('/', auth, async (req, res) => {
       fare,
     });
 
-    const ride = await newRide.save();
-    res.json(ride);
+    const ride = await newRide.save(); // Save the new ride to the database
+
+    // Find and Send notification to all drivers
+    const drivers = await User.find({
+      role: 'driver',
+      notificationsEnabled: true
+    });
+
+    // Send notification to all drivers
+    for (const driver of drivers) {
+      await sendRideNotification(driver.email, {
+        pickupLocation,
+        destination,
+        date,
+        time,
+        fare,
+        passengers,
+      });
+    }
+
+    res.json(ride); // Send the ride object as response
   } catch (err) {
     console.error(err.message);
     // res.status(500).send('Server error');
@@ -62,8 +83,32 @@ router.put('/:id/:action', auth, async (req, res) => {
       return res.status(400).json({ msg: 'Invalid action' });
     }
 
-    ride.status = action === 'accept' ? 'accepted' : 'rejected';
-    ride.driver = req.user.id;
+
+    // Only proceed with notification if the action is 'accept'
+    if (action === 'accept') {
+      ride.status = 'accepted';
+      ride.driver = req.user.id;
+
+      //Get the rider's info
+      const rider = await User.findById(ride.rider);
+      const driver = await User.findById(req.user.id);
+
+      // Send notification to the rider
+      await sendRideAcceptedNotification(rider.email, {
+        pickupLocation: ride.pickupLocation,
+        destination: ride.destination,
+        date: ride.date,
+        time: ride.time,
+        passengers: ride.passengers,
+        fare: ride.fare
+      }, `${driver.firstName} ${driver.lastName}`);
+    } else {
+      ride.status = 'rejected';
+      ride.driver = req.user.id;
+    }
+
+    // ride.status = action === 'accept' ? 'accepted' : 'rejected';
+    // ride.driver = req.user.id;
 
     const updatedRide = await ride.save();
     // Transform the response to match frontend expectations

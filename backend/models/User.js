@@ -8,6 +8,7 @@ const userSchema = new mongoose.Schema({
   lastName: { type: String, required: true },
   phone: { type: String }, // Added phone number
   role: { type: String, enum: ['rider', 'driver'], required: true },
+  notificationsEnabled: { type: Boolean, default: true }
 });
 
 module.exports = mongoose.model('User', userSchema);
