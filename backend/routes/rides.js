@@ -28,13 +28,14 @@ router.post('/', auth, async (req, res) => {
     });
     
     // Send notification to all drivers
-    for (const dirver of drivers) {
+    for (const driver of drivers) {
       await sendRideNotification(driver.email, {
         pickupLocation,
         destination,
         date,
         time,
         fare,
+        passengers,
       });
     }
 
