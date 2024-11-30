@@ -28,15 +28,9 @@ const upload = multer({
     }
 });
 
-router.post("/information", auth, async (req, res) => {
-    try {
-        // Handle driver information submission
-    } catch (err) {
-        console.error(err.message);
-        res.status(500).send("Server Error");
-    }
-});
-auth,
+// Fix: Combine the route handler properly
+router.post("/information", 
+    auth,
     upload.fields([
         { name: 'driverLicense', maxCount: 1 },
         { name: 'vehicleImage', maxCount: 1 }
@@ -71,5 +65,6 @@ auth,
             res.status(500).json({ msg: 'Server error', error: err.message });
         }
     }
+);
 
 module.exports = router;
