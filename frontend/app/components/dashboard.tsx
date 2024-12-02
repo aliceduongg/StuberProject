@@ -41,7 +41,7 @@ type Ride = {
 };
 
 export function Dashboard() {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<any>(null);
   const [rides, setRides] = useState<Ride[]>([]);
   const router = useRouter();
 
