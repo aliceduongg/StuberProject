@@ -29,6 +29,8 @@ export function Profile() {
       const parsedUser = JSON.parse(storedUser);
       console.log("Retrieved user from local storage:", parsedUser);
       setUser(parsedUser);
+       // Fetch complete profile data from backend
+      fetchUserProfile(parsedUser.id);
       if (parsedUser.firstName) setFirstName(parsedUser.firstName);
       if (parsedUser.lastName) setLastName(parsedUser.lastName);
       if (parsedUser.phone) setPhone(parsedUser.phone);
