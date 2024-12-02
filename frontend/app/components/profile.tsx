@@ -49,14 +49,16 @@ export function Profile() {
       );
       if (response.ok) {
         const data = await response.json();
-        console.log("Fetched user profile:", data);
         setFirstName(data.firstName || "");
         setLastName(data.lastName || "");
         setPhone(data.phone || "");
-        if (data.licensePlateNumber)
-          setLicensePlateNumber(data.licensePlateNumber);
-      } else {
-        console.error("Failed to retrieve user data.");
+        setLicensePlateNumber(data.licensePlateNumber || "");
+        
+        // Update local storage with complete user data
+        localStorage.setItem("user", JSON.stringify({
+          ...user,
+          ...data
+        }));
       }
     } catch (error) {
       console.error("Failed to fetch user profile:", error);
