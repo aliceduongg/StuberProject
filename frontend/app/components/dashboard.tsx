@@ -139,7 +139,7 @@ export function Dashboard() {
       <Card className="bg-white bg-opacity-80 backdrop-blur-md border-pastel-blue">
         <CardHeader>
           <CardTitle className="text-pastel-blue">
-            Welcome, {user.email}
+            Welcome, {user.firstName}
           </CardTitle>
           <CardDescription>You are logged in as a {user.role}</CardDescription>
         </CardHeader>
