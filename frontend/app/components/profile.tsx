@@ -77,7 +77,7 @@ export function Profile() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          userId: user.id,
+          userId: user._id,
           firstName,
           lastName,
           phone,

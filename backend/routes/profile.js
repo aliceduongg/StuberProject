@@ -18,7 +18,7 @@ router.get('/profile/:userId', async (req, res) => {
 
 // Update profile route
 router.put('/profile', async (req, res) => {
-  const { userId, firstName, lastName, phone } = req.body;
+  const { userId, firstName, lastName, phone, licensePlateNumber} = req.body;
 
   try {
     const user = await User.findById(userId);
@@ -29,10 +29,14 @@ router.put('/profile', async (req, res) => {
     user.firstName = firstName;
     user.lastName = lastName;
     user.phone = phone;
+    if (licensePlateNumber) {
+      user.licensePlateNumber = licensePlateNumber;
+    }
     await user.save();
 
     res.json({ msg: 'Profile updated successfully', user });
   } catch (error) {
+    console.error('Profile update error:', error);
     res.status(500).json({ msg: 'Server error' });
   }
 });
