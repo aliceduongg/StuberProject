@@ -13,6 +13,7 @@ export function Profile() {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [phone, setPhone] = useState('');
+  const [licensePlateNumber, setLicensePlateNumber] = useState('');
   const router = useRouter();
   
 
@@ -20,13 +21,13 @@ export function Profile() {
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
       const parsedUser = JSON.parse(storedUser);
-      console.log('Retrieved user from local storage:', parsedUser); // Debug log to check user data
+      console.log('Retrieved user from local storage:', parsedUser);
       setUser(parsedUser);
-    // Set firstName and lastName from the retrieved user
-    if (parsedUser.firstName) setFirstName(parsedUser.firstName);
-    if (parsedUser.lastName) setLastName(parsedUser.lastName);
-    if (parsedUser.phone) setPhone(parsedUser.phone);
-    console.log('Parsed user object:', parsedUser);
+      if (parsedUser.firstName) setFirstName(parsedUser.firstName);
+      if (parsedUser.lastName) setLastName(parsedUser.lastName);
+      if (parsedUser.phone) setPhone(parsedUser.phone);
+      if (parsedUser.licensePlateNumber) setLicensePlateNumber(parsedUser.licensePlateNumber);
+      console.log('Parsed user object:', parsedUser);
     } else {
       router.push('/login');
     }
@@ -37,10 +38,11 @@ export function Profile() {
       const response = await fetch(`http://localhost:8080/api/auth/profile/${userId}`);
       if (response.ok) {
         const data = await response.json();
-        console.log('Fetched user profile:', data); // Debug log to check fetched data
+        console.log('Fetched user profile:', data);
         setFirstName(data.firstName || '');
         setLastName(data.lastName || '');
         setPhone(data.phone || '');
+        if (data.licensePlateNumber) setLicensePlateNumber(data.licensePlateNumber);
       } else {
         console.error('Failed to retrieve user data.');
       }
