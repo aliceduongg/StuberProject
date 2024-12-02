@@ -31,8 +31,8 @@ export function AuthForm({ type }: AuthFormProps) {
     e.preventDefault();
 
     // Validation for both login and signup
-    if (!email || !password) {
-      setError("Please fill in all required fields.");
+    if (!email || !password || (type === "signup" && (!role || !firstName || !lastName))) {
+      setError("Please fill in all the fields.");
       return;
     }
 
