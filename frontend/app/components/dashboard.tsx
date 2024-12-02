@@ -26,6 +26,7 @@ import { RideBooking } from "./RideBooking";
 type User = {
   email: string;
   role: "rider" | "driver";
+  firstName: string;
 };
 
 type Ride = {
