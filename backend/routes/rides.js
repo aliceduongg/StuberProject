@@ -51,6 +51,13 @@ router.post('/', auth, async (req, res) => {
 // Get all rides
 router.get('/', auth, async (req, res) => {
   try {
+    let rides;
+    if (req.user.role === 'rider') {
+      rides = await Ride.find({ rider: req.user.id }).sort({ date: -1 });
+    }
+
+
+
     const rides = await Ride.find().sort({ date: -1 });
     // Transform the rides to include id
     const ridesWithId = rides.map(ride => ({
