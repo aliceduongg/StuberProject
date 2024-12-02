@@ -65,22 +65,25 @@ export function AuthForm({ type }: AuthFormProps) {
     try {
       // Use different endpoints based on type
       const endpoint = type === "login" ? "login" : "signup";
-      const response = await fetch(`http://localhost:8080/api/auth/${endpoint}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email,
-          password,
-          ...(type === "signup" && {
-            firstName,
-            lastName,
-            phone,
-            role,
+      const response = await fetch(
+        `http://localhost:8080/api/auth/${endpoint}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email,
+            password,
+            ...(type === "signup" && {
+              firstName,
+              lastName,
+              phone,
+              role,
+            }),
           }),
-        }),
-      });
+        }
+      );
 
       const data = await response.json();
 
@@ -103,14 +106,18 @@ export function AuthForm({ type }: AuthFormProps) {
       );
 
       // Redirect based on role
-      if (data.user.role === "driver" &&
-        (!data.user.driverLicense || !data.user.vehicleImage || !data.user.licensePlateNumber)) {
-      // Only redirect to driver-information if documents are missing
-      router.push("/driver-information");
-    } else {
-      // If driver has already uploaded documents, go straight to dashboard
-      router.push("/dashboard");
-    }
+      if (
+        data.user.role === "driver" &&
+        (!data.user.driverLicense ||
+          !data.user.vehicleImage ||
+          !data.user.licensePlateNumber)
+      ) {
+        // Only redirect to driver-information if documents are missing
+        router.push("/driver-information");
+      } else {
+        // If driver has already uploaded documents, go straight to dashboard
+        router.push("/dashboard");
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
     }
@@ -121,7 +128,8 @@ export function AuthForm({ type }: AuthFormProps) {
       <CardHeader>
         <CardTitle>{type === "login" ? "Login" : "Sign Up"}</CardTitle>
         <CardDescription>
-          Enter your details to {type === "login" ? "login" : "create an account"}.
+          Enter your details to{" "}
+          {type === "login" ? "login" : "create an account"}.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -200,7 +208,9 @@ export function AuthForm({ type }: AuthFormProps) {
           <div className="flex justify-between mt-4">
             <Button
               variant="outline"
-              onClick={() => router.push(type === "login" ? "/signup" : "/login")}
+              onClick={() =>
+                router.push(type === "login" ? "/signup" : "/login")
+              }
             >
               {type === "login" ? "Sign Up" : "Login"}
             </Button>
