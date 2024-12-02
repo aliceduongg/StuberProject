@@ -72,13 +72,14 @@ export function Dashboard() {
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
-    console.log("Token:", localStorage.getItem("token"));
     if (storedUser) {
-      setUser(JSON.parse(storedUser));
+      const parsedUser = JSON.parse(storedUser);
+      console.log("Parsed user:", parsedUser); //Debug line
+      setUser(parsedUser);
     } else {
       router.push("/login");
     }
-
+  
     fetchRides();
   }, [router, fetchRides]);
 
