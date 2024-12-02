@@ -79,7 +79,7 @@ export function Dashboard() {
     } else {
       router.push("/login");
     }
-  
+
     fetchRides();
   }, [router, fetchRides]);
 
@@ -202,6 +202,54 @@ export function Dashboard() {
                           <XCircle className="mr-2" />
                           Reject
                         </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              <h3 className="text-lg font-semibold text-pastel-blue mb-4 mt-8">
+                Your Accepted Rides
+              </h3>
+              {rides
+                .filter((ride) => ride.status === "accepted")
+                .map((ride) => (
+                  <Card
+                    key={`accepted-ride-${ride.id}`}
+                    className="mt-4 bg-white bg-opacity-80 backdrop-blur-md border-green-200"
+                  >
+                    <CardContent className="p-4">
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center">
+                            <MapPin className="text-green-600 mr-2" />
+                            <span className="font-semibold">
+                              Destination: {ride.destination}
+                            </span>
+                          </div>
+                          <div className="flex items-center text-green-600">
+                            <DollarSign className="mr-1" />
+                            <span className="font-bold">{ride.fare}</span>
+                          </div>
+                        </div>
+                        <div className="flex items-center">
+                          <Users className="text-green-600 mr-2" />
+                          <span>Passengers: {ride.passengers}</span>
+                        </div>
+                        <div className="flex items-center">
+                          <Calendar className="text-green-600 mr-2" />
+                          <span>Date: {ride.date}</span>
+                        </div>
+                        <div className="flex items-center">
+                          <Clock className="text-green-600 mr-2" />
+                          <span>Time: {ride.time}</span>
+                        </div>
+                        <div className="flex items-center">
+                          <MapPin className="text-green-600 mr-2" />
+                          <span>Pickup Location: {ride.pickupLocation}</span>
+                        </div>
+                        <div className="mt-2 inline-flex items-center px-2 py-1 bg-green-100 text-green-800 rounded-full">
+                          <CheckCircle className="h-4 w-4 mr-1" />
+                          Accepted
+                        </div>
                       </div>
                     </CardContent>
                   </Card>
