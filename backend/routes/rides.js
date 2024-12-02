@@ -53,12 +53,18 @@ router.get('/', auth, async (req, res) => {
   try {
     let rides;
     if (req.user.role === 'rider') {
+      // Riders only see their own rides
       rides = await Ride.find({ rider: req.user.id }).sort({ date: -1 });
+    } else if (req.user.role === 'driver') {
+      // Drivers see all pending rides and rides they've accepted/rejected
+      rides = await Ride.find({
+        $or: [
+          { status: 'pending' },
+          { driver: req.user.id }
+        ]
+      }).sort({ date: -1 });
     }
 
-
-
-    const rides = await Ride.find().sort({ date: -1 });
     // Transform the rides to include id
     const ridesWithId = rides.map(ride => ({
       ...ride.toObject(),
