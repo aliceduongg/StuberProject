@@ -14,6 +14,7 @@ export function Profile() {
   const [lastName, setLastName] = useState('');
   const [phone, setPhone] = useState('');
   const router = useRouter();
+  
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
@@ -21,9 +22,11 @@ export function Profile() {
       const parsedUser = JSON.parse(storedUser);
       console.log('Retrieved user from local storage:', parsedUser); // Debug log to check user data
       setUser(parsedUser);
-      if (parsedUser.id) {
-        fetchUserProfile(parsedUser.id);
-      }
+    // Set firstName and lastName from the retrieved user
+    if (parsedUser.firstName) setFirstName(parsedUser.firstName);
+    if (parsedUser.lastName) setLastName(parsedUser.lastName);
+    if (parsedUser.phone) setPhone(parsedUser.phone);
+    console.log('Parsed user object:', parsedUser);
     } else {
       router.push('/login');
     }
