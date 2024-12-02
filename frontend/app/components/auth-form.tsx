@@ -103,11 +103,14 @@ export function AuthForm({ type }: AuthFormProps) {
       );
 
       // Redirect based on role
-      if (data.user.role === "driver") {
-        router.push("/driver-information");
-      } else {
-        router.push("/dashboard");
-      }
+      if (data.user.role === "driver" &&
+        (!data.user.driverLicense || !data.user.vehicleImage || !data.user.licensePlateNumber)) {
+      // Only redirect to driver-information if documents are missing
+      router.push("/driver-information");
+    } else {
+      // If driver has already uploaded documents, go straight to dashboard
+      router.push("/dashboard");
+    }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
     }
