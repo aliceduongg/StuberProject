@@ -23,25 +23,6 @@ export function Profile() {
   const [licensePlateNumber, setLicensePlateNumber] = useState("");
   const router = useRouter();
 
-  useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      const parsedUser = JSON.parse(storedUser);
-      console.log("Retrieved user from local storage:", parsedUser);
-      setUser(parsedUser);
-       // Fetch complete profile data from backend
-      fetchUserProfile(parsedUser.id);
-      if (parsedUser.firstName) setFirstName(parsedUser.firstName);
-      if (parsedUser.lastName) setLastName(parsedUser.lastName);
-      if (parsedUser.phone) setPhone(parsedUser.phone);
-      if (parsedUser.licensePlateNumber)
-        setLicensePlateNumber(parsedUser.licensePlateNumber);
-      console.log("Parsed user object:", parsedUser);
-    } else {
-      router.push("/login");
-    }
-  }, [router]);
-
   const fetchUserProfile = async (userId: string) => {
     try {
       const response = await fetch(
@@ -52,21 +33,50 @@ export function Profile() {
         setFirstName(data.firstName || "");
         setLastName(data.lastName || "");
         setPhone(data.phone || "");
-        setLicensePlateNumber(data.licensePlateNumber || "");
-        
+        // Explicitly set license plate number if it exists
+        if (data.licensePlateNumber) {
+          setLicensePlateNumber(data.licensePlateNumber);
+        }
+
         // Update local storage with complete user data
-        localStorage.setItem("user", JSON.stringify({
+        const updatedUser = {
           ...user,
-          ...data
-        }));
+          ...data,
+        };
+        localStorage.setItem("user", JSON.stringify(updatedUser));
+        setUser(updatedUser);
       }
     } catch (error) {
       console.error("Failed to fetch user profile:", error);
     }
   };
 
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      const parsedUser = JSON.parse(storedUser);
+      console.log("Retrieved user from local storage:", parsedUser);
+      setUser(parsedUser);
+      // Fetch complete profile data from backend
+      fetchUserProfile(parsedUser.id);
+      if (parsedUser.firstName) setFirstName(parsedUser.firstName);
+      if (parsedUser.lastName) setLastName(parsedUser.lastName);
+      if (parsedUser.phone) setPhone(parsedUser.phone);
+      if (parsedUser.licensePlateNumber) {
+        setLicensePlateNumber(parsedUser.licensePlateNumber);
+      }
+      console.log("User role:", parsedUser.role); // Add this log
+    } else {
+      router.push("/login");
+    }
+  }, [router]);
+
   const handleUpdateProfile = async () => {
     try {
+      console.log("Updating profile for user:", user);
+      console.log("User role:", user.role);
+      console.log("License plate number:", licensePlateNumber);
+
       const updatedUser = {
         ...user,
         firstName,
@@ -169,9 +179,10 @@ export function Profile() {
                 </Label>
                 <Input
                   id="licensePlate"
-                  value={licensePlateNumber || "Not provided"}
+                  value={licensePlateNumber}
                   onChange={(e) => setLicensePlateNumber(e.target.value)}
                   className="flex-grow border-pastel-blue"
+                  placeholder="Enter license plate number"
                 />
               </div>
             )}
