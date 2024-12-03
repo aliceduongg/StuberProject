@@ -145,13 +145,15 @@ export function Dashboard() {
           method: "PUT",
           headers: {
             "x-auth-token": token,
+            "Authorization": `Bearer ${token}`,  
             "Content-Type": "application/json",
           },
         }
       );
 
       if (!response.ok) {
-        throw new Error("Failed to cancel ride");
+        const errorData = await response.json();
+        throw new Error(errorData.msg || "Failed to cancel ride");
       }
 
       const updatedRide = await response.json();

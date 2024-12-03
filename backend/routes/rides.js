@@ -143,6 +143,10 @@ router.put('/:id/cancel', auth, async (req, res) => {
     if (!ride) {
       return res.status(404).json({ msg: 'Ride not found' });
     }
+    
+    if (ride.rider.toString() !== req.user.id) {
+      return res.status(401).json({ msg: 'Not authorized to cancel this ride' });
+    }
 
     // Update ride status to cancelled
     ride.status = 'cancelled';
