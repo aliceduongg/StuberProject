@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Autocomplete from "./Autocomplete";
+import FareCalculator from "./FareCalculator";
 
 interface RideBookingProps {
   onBookingComplete: (newRide: any) => void;
@@ -119,13 +120,18 @@ export function RideBooking({ onBookingComplete }: RideBookingProps) {
       </div>
 
       <div className="space-y-2">
+        <label className="block text-sm font-medium">Fare Suggestion</label>
+        <FareCalculator pickupLocation={pickupLocation} destination={destination}/>
+      </div>
+
+      <div className="space-y-2">
         <label className="block text-sm font-medium">Fare ($)</label>
         <Input
           type="number"
           value={fare}
           onChange={(e) => setFare(Number(e.target.value))}
           min={1}
-          step="0.01"
+          step="0.10"
         />
       </div>
 

@@ -23,6 +23,7 @@ app.use('/api/auth', require('./routes/auth'));
 app.use('/api/rides', require('./routes/rides'));
 app.use('/api/profile', require('./routes/profile'));
 app.use('/api/driver', require('./routes/driver'));
+app.use('/api/rides/fare', require('./routes/fareRoutes'));
 
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
