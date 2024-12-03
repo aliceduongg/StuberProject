@@ -45,6 +45,7 @@ router.post('/signup', async (req, res) => {
         res.json({
           token,
           user: {
+            id: user.id,
             email: user.email,
             role: user.role,
             firstName: user.firstName,

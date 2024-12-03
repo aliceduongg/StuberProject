@@ -31,7 +31,11 @@ export function AuthForm({ type }: AuthFormProps) {
     e.preventDefault();
 
     // Validation for both login and signup
-    if (!email || !password || (type === "signup" && (!role || !firstName || !lastName))) {
+    if (
+      !email ||
+      !password ||
+      (type === "signup" && (!role || !firstName || !lastName))
+    ) {
       setError("Please fill in all the fields.");
       return;
     }
@@ -96,7 +100,8 @@ export function AuthForm({ type }: AuthFormProps) {
       localStorage.setItem(
         "user",
         JSON.stringify({
-          id: data.user._id,
+          id: data.user._id, 
+          _id: data.user._id, 
           email: data.user.email,
           role: data.user.role,
           firstName: data.user.firstName,
