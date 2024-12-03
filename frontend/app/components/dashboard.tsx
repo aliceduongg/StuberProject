@@ -94,16 +94,13 @@ export function Dashboard() {
     setRides((prevRides) => [...prevRides, newRide]);
   };
 
-  const handleRideAction = async (
-    rideId: string,
-    action: "accept" | "reject"
-  ) => {
+  const handleRideAction = async (rideId: string, action: "accept" | "reject") => {
     try {
       const token = localStorage.getItem("token");
       if (!token) {
         throw new Error("No authentication token found");
       }
-
+  
       const response = await fetch(
         `http://localhost:8080/api/rides/${rideId}/${action}`,
         {
@@ -114,17 +111,20 @@ export function Dashboard() {
           },
         }
       );
-
+  
       if (!response.ok) {
         throw new Error(`Failed to ${action} ride`);
       }
-
+  
       const updatedRide = await response.json();
+  
+      // Update the local state with the new ride information or re-fetch all rides
       setRides((prevRides) =>
-        prevRides.map((ride) =>
-          ride.id === updatedRide.id ? updatedRide : ride
-        )
+        prevRides.map((ride) => (ride.id === updatedRide.id ? updatedRide : ride))
       );
+  
+      // Re-fetch rides to ensure the latest state
+      await fetchRides();
     } catch (error) {
       console.error(`Error ${action}ing ride:`, error);
       if (error instanceof Error && error.message.includes("401")) {
@@ -132,6 +132,44 @@ export function Dashboard() {
       }
     }
   };
+  
+  const handleCancelRide = async (rideId: string) => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        throw new Error("No authentication token found");
+      }
+  
+      const response = await fetch(
+        `http://localhost:8080/api/rides/${rideId}/cancel`,
+        {
+          method: "PUT",
+          headers: {
+            "x-auth-token": token,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+  
+      if (!response.ok) {
+        throw new Error("Failed to cancel ride");
+      }
+  
+      const updatedRide = await response.json();
+  
+      // Update the local state with the new ride information or re-fetch all rides
+      setRides((prevRides) =>
+        prevRides.map((ride) => (ride.id === updatedRide.id ? updatedRide : ride))
+      );
+  
+      // Re-fetch rides to ensure the latest state
+      await fetchRides();
+    } catch (error) {
+      console.error("Error cancelling ride:", error);
+    }
+  };
+  
+  
 
   if (!user) return null;
 
@@ -250,6 +288,15 @@ export function Dashboard() {
                           <CheckCircle className="h-4 w-4 mr-1" />
                           Accepted
                         </div>
+                        <div className="mt-4 flex justify-end space-x-2">
+                          <Button
+                            onClick={() => handleCancelRide(ride.id)}
+                            className="bg-red-500 text-white hover:bg-red-600"
+                          >
+                            <XCircle className="mr-2" />
+                            Cancel
+                          </Button>
+                        </div>
                       </div>
                     </CardContent>
                   </Card>
@@ -299,7 +346,15 @@ export function Dashboard() {
                     }`}
                   >
                     {ride.status.charAt(0).toUpperCase() + ride.status.slice(1)}
+                    <Button
+                  onClick={() => handleCancelRide(ride.id)}
+                  className="bg-red-500 text-white hover:bg-red-600"
+                >
+                  <XCircle className="mr-2" />
+                  Cancel
+                </Button>
                   </span>
+                  
                 </div>
               ))}
           </CardContent>
