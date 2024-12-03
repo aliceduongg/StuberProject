@@ -26,7 +26,7 @@ router.get('/profile/:userId', async (req, res) => {
 
 
 // Update profile route
-router.put('/profile', async (req, res) => {
+router.put('/', async (req, res) => {
   const { userId, firstName, lastName, phone, licensePlateNumber} = req.body;
 
   try {
