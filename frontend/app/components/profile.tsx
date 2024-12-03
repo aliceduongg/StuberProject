@@ -26,7 +26,7 @@ export function Profile() {
   const fetchUserProfile = async (userId: string) => {
     try {
       const response = await fetch(
-        `http://localhost:8080/api/profile/${userId}` 
+        `http://localhost:8080/api/profile/${userId}`
       );
       if (response.ok) {
         const data = await response.json();
@@ -54,17 +54,26 @@ export function Profile() {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
       const parsedUser = JSON.parse(storedUser);
-      console.log('Stored user data:', parsedUser); // Debug log
-      setUser(parsedUser);
-      // Fetch complete profile data from backend
-      fetchUserProfile(parsedUser._id);
-      if (parsedUser.firstName) setFirstName(parsedUser.firstName);
-      if (parsedUser.lastName) setLastName(parsedUser.lastName);
-      if (parsedUser.phone) setPhone(parsedUser.phone);
-      if (parsedUser.licensePlateNumber) {
-        setLicensePlateNumber(parsedUser.licensePlateNumber);
+      console.log("Stored user data:", parsedUser); // Debug log
+
+      // Check for both _id and id since the backend sends id
+      const userId = parsedUser._id || parsedUser.id;
+
+      if (userId) {
+        setUser(parsedUser);
+        fetchUserProfile(userId);
+
+        if (parsedUser.firstName) setFirstName(parsedUser.firstName);
+        if (parsedUser.lastName) setLastName(parsedUser.lastName);
+        if (parsedUser.phone) setPhone(parsedUser.phone);
+        if (parsedUser.licensePlateNumber) {
+          setLicensePlateNumber(parsedUser.licensePlateNumber);
+        }
+        console.log("User role:", parsedUser.role);
+      } else {
+        console.error("No user ID found in stored user data");
+        router.push("/login");
       }
-      console.log("User role:", parsedUser.role); // Add this log
     } else {
       router.push("/login");
     }
@@ -72,17 +81,10 @@ export function Profile() {
 
   const handleUpdateProfile = async () => {
     try {
-      console.log("Updating profile for user:", user);
-      console.log("User role:", user.role);
-      console.log("License plate number:", licensePlateNumber);
-
-      const updatedUser = {
-        ...user,
-        firstName,
-        lastName,
-        phone,
-        ...(user.role === "driver" && { licensePlateNumber }),
-      };
+      const userId = user._id || user.id; // Check for both _id and id
+      if (!userId) {
+        throw new Error("User ID not found");
+      }
 
       const response = await fetch("http://localhost:8080/api/profile", {
         method: "PUT",
@@ -90,7 +92,7 @@ export function Profile() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          userId: user._id,
+          userId: userId,
           firstName,
           lastName,
           phone,
@@ -102,10 +104,19 @@ export function Profile() {
         throw new Error("Failed to update profile");
       }
 
+      const updatedUser = {
+        ...user,
+        firstName,
+        lastName,
+        phone,
+        ...(user.role === "driver" && { licensePlateNumber }),
+      };
+
       localStorage.setItem("user", JSON.stringify(updatedUser));
       setUser(updatedUser);
       alert("Profile updated successfully!");
     } catch (error) {
+      console.error("Profile update error:", error);
       alert("Failed to update profile. Please try again.");
     }
   };
