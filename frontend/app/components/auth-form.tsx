@@ -100,7 +100,6 @@ export function AuthForm({ type }: AuthFormProps) {
       localStorage.setItem(
         "user",
         JSON.stringify({
-          id: data.user._id, 
           _id: data.user._id, 
           email: data.user.email,
           role: data.user.role,
