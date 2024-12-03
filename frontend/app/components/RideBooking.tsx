@@ -120,11 +120,6 @@ export function RideBooking({ onBookingComplete }: RideBookingProps) {
       </div>
 
       <div className="space-y-2">
-        <label className="block text-sm font-medium">Fare Suggestion</label>
-        <FareCalculator pickupLocation={pickupLocation} destination={destination}/>
-      </div>
-
-      <div className="space-y-2">
         <label className="block text-sm font-medium">Fare ($)</label>
         <Input
           type="number"
@@ -133,6 +128,11 @@ export function RideBooking({ onBookingComplete }: RideBookingProps) {
           min={1}
           step="0.10"
         />
+      </div>
+
+      <div className="space-y-2">
+        <label className="block text-sm font-medium">Fare Suggestion</label>
+        <FareCalculator pickupLocation={pickupLocation} destination={destination}/>
       </div>
 
       {error && <p className="text-red-500 text-sm">{error}</p>}

@@ -1,7 +1,7 @@
 const express = require('express');
-const axios = require('axios'); 
 const router = express.Router();
-require('dotenv').config();
+const haversineDistance = require('haversine-distance');
+const geocoder = require('geocoder');
 
 // Fare calculation constants
 const FARE_CONFIG = {
@@ -9,30 +9,43 @@ const FARE_CONFIG = {
   PER_MILE_RATE: 0.50,
   NIGHT_SURCHARGE_RATE: 0.25,
   NIGHT_START_HOUR: 22, // 10 PM
-  NIGHT_END_HOUR: 6,    // 5 AM
+  NIGHT_END_HOUR: 6,    // 6 AM
 };
 
-// Helper function to calculate distance using routing API
-async function calculateRouteDistance(origin, destination) {
-  try {
-    // 
-    const response = await axios.get(
-        `https://api.openrouteservice.org/v2/directions/driving-car?api_key=${process.env.OPENROUTESERVICE_API_KEY}&start=${origin}&end=${destination}`,
-        {
-          params: {
-            key: process.env.OPENROUTESERVICE_API_KEY,
-          }
-        }
-      );
-      
-      
+// Helper function to calculate distance between addresses
+function calculateDistanceBetweenAddresses(origin, destination) {
+  return new Promise((resolve, reject) => {
+    // Geocode origin address
+    geocoder.geocode(origin, async (err1, originData) => {
+      if (err1 || !originData || !originData[0]) {
+        return reject(new Error('Could not geocode origin address'));
+      }
 
-    // Assuming the API returns distance in miles
-    return response.data.routes[0].legs[0].distance;
-  } catch (error) {
-    console.error('Distance calculation error:', error);
-    throw new Error('Unable to calculate route distance');
-  }
+      // Geocode destination address
+      geocoder.geocode(destination, (err2, destData) => {
+        if (err2 || !destData || !destData[0]) {
+          return reject(new Error('Could not geocode destination address'));
+        }
+
+        // Calculate distance using haversine formula
+        const originCoords = {
+          latitude: originData[0].latitude,
+          longitude: originData[0].longitude
+        };
+
+        const destCoords = {
+          latitude: destData[0].latitude,
+          longitude: destData[0].longitude
+        };
+
+        // Calculate distance in miles
+        const distanceInMeters = haversineDistance(originCoords, destCoords);
+        const distanceInMiles = (distanceInMeters / 1609.344).toFixed(2);
+
+        resolve(parseFloat(distanceInMiles));
+      });
+    });
+  });
 }
 
 // Helper function to check if ride is during night/early morning
@@ -50,7 +63,7 @@ router.post('/calculate-fare', async (req, res) => {
     const { pickupLocation, destination, rideTime } = req.body;
 
     // Calculate route distance
-    const distance = await calculateRouteDistance(pickupLocation, destination);
+    const distance = await calculateDistanceBetweenAddresses(pickupLocation, destination);
 
     // Calculate base fare components
     const baseFare = FARE_CONFIG.BASE_FARE;
