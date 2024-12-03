@@ -138,31 +138,29 @@ router.put('/:id/:action', auth, async (req, res) => {
 //cancel
 router.put('/:id/cancel', auth, async (req, res) => {
   try {
-    const { id } = req.params;
-    const ride = await Ride.findById(id);
+    const ride = await Ride.findById(req.params.id);
 
     if (!ride) {
       return res.status(404).json({ msg: 'Ride not found' });
     }
 
-    // Check if the user is either the rider or the driver who wants to cancel the ride
-    if (req.user.role === 'rider' && req.user.id !== ride.rider.toString()) {
+    // Check if the user is either the rider or driver of this ride
+    if (ride.rider.toString() !== req.user.id &&
+      (!ride.driver || ride.driver.toString() !== req.user.id)) {
       return res.status(401).json({ msg: 'Not authorized to cancel this ride' });
     }
 
-    if (req.user.role === 'driver' && req.user.id !== ride.driver.toString()) {
-      return res.status(401).json({ msg: 'Not authorized to cancel this ride' });
-    }
-
+    // Update ride status to cancelled
     ride.status = 'cancelled';
     const updatedRide = await ride.save();
+
     res.json({
       ...updatedRide.toObject(),
-      id: updatedRide._id,
+      id: updatedRide._id
     });
   } catch (err) {
-    console.error('Error cancelling ride:', err);
-    res.status(500).json({ msg: 'Server error', error: err.message });
+    console.error(err.message);
+    res.status(500).json({ msg: 'Server error' });
   }
 });
 
