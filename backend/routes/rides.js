@@ -10,6 +10,10 @@ const router = express.Router();
 router.post('/', auth, async (req, res) => {
   try {
     const { destination, pickupLocation, passengers, date, time, fare } = req.body;
+    const MINIMUM_FARE = 5; // Minimum fare of $5
+    if (fare < MINIMUM_FARE) {
+      return res.status(400).json({ msg: `Minimum fare is $${MINIMUM_FARE}` });
+    }
     const newRide = new Ride({
       rider: req.user.id,
       destination,
