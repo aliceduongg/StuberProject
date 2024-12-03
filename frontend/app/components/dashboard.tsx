@@ -36,7 +36,7 @@ type Ride = {
   passengers: number;
   date: string;
   time: string;
-  status: "pending" | "accepted" | "rejected";
+  status: "pending" | "accepted" | "rejected" | "cancelled";
   fare: number;
 };
 
@@ -93,7 +93,6 @@ export function Dashboard() {
     fetchRides();
     setRides((prevRides) => [...prevRides, newRide]);
   };
-
   const handleRideAction = async (
     rideId: string,
     action: "accept" | "reject"
@@ -130,6 +129,44 @@ export function Dashboard() {
       if (error instanceof Error && error.message.includes("401")) {
         router.push("/login");
       }
+    }
+  };
+
+  const handleCancelRide = async (rideId: string) => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        throw new Error("No authentication token found");
+      }
+
+      const response = await fetch(
+        `http://localhost:8080/api/rides/${rideId}/cancel`,
+        {
+          method: "PUT",
+          headers: {
+            "x-auth-token": token,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to cancel ride");
+      }
+
+      const updatedRide = await response.json();
+
+      // Update the local state with the new ride information or re-fetch all rides
+      setRides((prevRides) =>
+        prevRides.map((ride) =>
+          ride.id === updatedRide.id ? updatedRide : ride
+        )
+      );
+
+      // Re-fetch rides to ensure the latest state
+      await fetchRides();
+    } catch (error) {
+      console.error("Error cancelling ride:", error);
     }
   };
 
@@ -250,6 +287,15 @@ export function Dashboard() {
                           <CheckCircle className="h-4 w-4 mr-1" />
                           Accepted
                         </div>
+                        <div className="mt-4 flex justify-end space-x-2">
+                          <Button
+                            onClick={() => handleCancelRide(ride.id)}
+                            className="bg-red-500 text-white hover:bg-red-600"
+                          >
+                            <XCircle className="mr-2" />
+                            Cancel
+                          </Button>
+                        </div>
                       </div>
                     </CardContent>
                   </Card>
@@ -278,7 +324,7 @@ export function Dashboard() {
                       ? `ride-list-${ride.id}`
                       : `ride-list-fallback-${index}`
                   }
-                  className="mb-2 flex items-center justify-between"
+                  className="mb-2 flex items-center justify-between p-4 border rounded-lg"
                 >
                   <div className="flex items-center">
                     <Car className="text-pastel-blue mr-2" />
@@ -291,15 +337,25 @@ export function Dashboard() {
                       </span>
                     </span>
                   </div>
-                  <span
-                    className={`font-semibold ${
-                      ride.status === "accepted"
-                        ? "text-green-600"
-                        : "text-yellow-600"
-                    }`}
-                  >
-                    {ride.status.charAt(0).toUpperCase() + ride.status.slice(1)}
-                  </span>
+                  <div className="flex items-center space-x-4">
+                    <span
+                      className={`font-semibold ${
+                        ride.status === "accepted"
+                          ? "text-green-600"
+                          : "text-yellow-600"
+                      }`}
+                    >
+                      {ride.status.charAt(0).toUpperCase() +
+                        ride.status.slice(1)}
+                    </span>
+                    <Button
+                      onClick={() => handleCancelRide(ride.id)}
+                      className="bg-red-500 text-white hover:bg-red-600"
+                    >
+                      <XCircle className="mr-2" />
+                      Cancel
+                    </Button>
+                  </div>
                 </div>
               ))}
           </CardContent>

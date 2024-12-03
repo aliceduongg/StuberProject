@@ -9,7 +9,7 @@ const rideSchema = new mongoose.Schema({
   passengers: { type: Number, required: true },
   date: { type: Date, required: true },
   time: { type: String, required: true },
-  status: { type: String, enum: ['pending', 'accepted', 'rejected'], default: 'pending' },
+  status: { type: String, enum: ['pending', 'accepted', 'rejected', 'cancelled'], default: 'pending' },
   fare: { type: Number, required: true },
 });
 
