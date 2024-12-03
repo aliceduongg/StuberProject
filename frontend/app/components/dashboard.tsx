@@ -145,7 +145,6 @@ export function Dashboard() {
           method: "PUT",
           headers: {
             "x-auth-token": token,
-            "Authorization": `Bearer ${token}`,  
             "Content-Type": "application/json",
           },
         }
