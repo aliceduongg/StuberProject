@@ -26,14 +26,13 @@ export function Profile() {
   const fetchUserProfile = async (userId: string) => {
     try {
       const response = await fetch(
-        `http://localhost:8080/api/auth/profile/${userId}`
+        `http://localhost:8080/api/profile/${userId}` 
       );
       if (response.ok) {
         const data = await response.json();
         setFirstName(data.firstName || "");
         setLastName(data.lastName || "");
         setPhone(data.phone || "");
-        // Explicitly set license plate number if it exists
         if (data.licensePlateNumber) {
           setLicensePlateNumber(data.licensePlateNumber);
         }
@@ -85,7 +84,7 @@ export function Profile() {
         ...(user.role === "driver" && { licensePlateNumber }),
       };
 
-      const response = await fetch("http://localhost:8080/api/auth/profile", {
+      const response = await fetch("http://localhost:8080/api/profile", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

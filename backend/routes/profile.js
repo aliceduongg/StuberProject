@@ -8,9 +8,18 @@ router.get('/profile/:userId', async (req, res) => {
     if (!user) {
       return res.status(404).json({ msg: 'User not found' });
     }
-
-    res.json(user);
+    // Return complete user object including license plate
+    res.json({
+      id: user._id,
+      email: user.email,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      phone: user.phone,
+      role: user.role,
+      licensePlateNumber: user.licensePlateNumber
+    });
   } catch (error) {
+    console.error('Profile fetch error:', error);
     res.status(500).json({ msg: 'Server error' });
   }
 });
