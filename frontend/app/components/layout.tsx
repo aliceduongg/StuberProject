@@ -2,32 +2,43 @@ import Link from 'next/link'
 import { Button } from "@/components/ui/button"
 import { Car, User } from 'lucide-react'
 
+
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen bg-blue-light text-blue-dark">
-      <header className="border-b bg-pastel-blue bg-opacity-80 backdrop-blur-md z-10">
-        <div className="flex items-center justify-between py-4 px-4 w-full">
-          <Link href="/" className="text-2xl font-bold text-white flex items-center">
-            <Car className="mr-2" />
+    <div className="min-h-screen bg-blue-100 text-blue-900">
+      <header className="bg-gradient-to-r from-blue-600 to-blue-800 text-white shadow-lg">
+        <div className="container mx-auto flex items-center justify-between py-4 px-6">
+          <Link href="/" className="text-2xl font-extrabold flex items-center hover:text-blue-200 transition duration-300">
+            <Car className="mr-2 h-8 w-8" />
             Campus RideShare
           </Link>
+
+
           <nav className="flex items-center space-x-4 ml-auto">
-            <Link href="/dashboard">
-              <Button variant="ghost" className="text-white text-lg px-2 py-3 hover:text-pastel-yellow hover:bg-blue-dark flex items-center">
-                <Car className="mr-2 h-6 w-6"  />
+            <Link href="/dashboard"
+               className="text-lg font-medium px-4 py-2 text-white hover:text-blue-200 hover:scale-105 transition-transform duration-300 flex items-center">
+                <Car className="mr-2 h-5 w-5"  />
                 Dashboard
-              </Button>
             </Link>
-            <Link href="/profile">
-              <Button variant="ghost" className="text-white text-lg px-2 py-3 hover:text-pastel-yellow hover:bg-blue-dark flex items-center">
-                <User className="mr-2 h-6 w-6"  />
+
+
+            <Link href="/profile" className="text-lg font-medium px-4 py-2 text-white hover:text-blue-200 hover:scale-105 transition-transform duration-300 flex items-center">
+                <User className="mr-2 h-5 w-5"  />
                 Profile
-              </Button>
             </Link>
           </nav>
         </div>
       </header>
       <main className="flex-1 relative">{children}</main>
+
+
+      {/* Footer */}
+      <footer className="bg-blue-800 text-blue-200 text-center py-4">
+        <p className="text-sm">
+          © {new Date().getFullYear()} Campus RideShare. All rights reserved.
+        </p>
+      </footer>
     </div>
   )
 }
+

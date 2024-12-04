@@ -19,9 +19,18 @@ export function RideBooking({ onBookingComplete }: RideBookingProps) {
   const [error, setError] = useState<string | null>(null);
 
   const handleBookRide = async () => {
-    console.log({ destination, pickupLocation, passengers, date, time, fare }); 
-    if (!destination || !pickupLocation || !passengers || !date || !time || fare <= 0) {
-      setError("Please fill in all required fields and ensure fare is greater than 0");
+    console.log({ destination, pickupLocation, passengers, date, time, fare });
+    if (
+      !destination ||
+      !pickupLocation ||
+      !passengers ||
+      !date ||
+      !time ||
+      fare <= 0
+    ) {
+      setError(
+        "Please fill in all required fields and ensure fare is greater than 0"
+      );
       return;
     }
 
@@ -34,8 +43,8 @@ export function RideBooking({ onBookingComplete }: RideBookingProps) {
 
       const headers: HeadersInit = {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`,
-        "x-auth-token": token
+        Authorization: `Bearer ${token}`,
+        "x-auth-token": token,
       };
 
       const response = await fetch("http://localhost:8080/api/rides", {
@@ -53,7 +62,7 @@ export function RideBooking({ onBookingComplete }: RideBookingProps) {
       });
 
       const data = await response.json();
-      
+
       if (!response.ok) {
         throw new Error(data.msg || "Failed to book ride");
       }
@@ -69,7 +78,6 @@ export function RideBooking({ onBookingComplete }: RideBookingProps) {
       setTime("");
       setFare(0);
       setError(null);
-      
     } catch (error: any) {
       console.error("Error booking ride:", error);
       setError(error?.message || "Failed to book ride. Please try again.");
@@ -77,7 +85,7 @@ export function RideBooking({ onBookingComplete }: RideBookingProps) {
   };
 
   return (
-    <div className="space-y-4 p-4 border rounded-lg">
+    <div className="space-y-4 p-4 border rounded-lg bg-white text-black">
       <h2 className="text-xl font-bold">Book a Ride</h2>
 
       <div className="space-y-2">
@@ -91,12 +99,16 @@ export function RideBooking({ onBookingComplete }: RideBookingProps) {
       </div>
 
       <div className="space-y-2">
-        <label className="block text-sm font-medium">Number of Passengers</label>
+        <label className="block text-sm font-medium">
+          Number of Passengers
+        </label>
         <Input
           type="number"
           value={passengers}
           onChange={(e) => setPassengers(Number(e.target.value))}
           min={1}
+          className="bg-white text-black border-pastel-blue"
+          
         />
       </div>
 
@@ -106,6 +118,7 @@ export function RideBooking({ onBookingComplete }: RideBookingProps) {
           type="date"
           value={date}
           onChange={(e) => setDate(e.target.value)}
+          className="bg-white text-black border-pastel-blue"
         />
       </div>
 
@@ -115,6 +128,7 @@ export function RideBooking({ onBookingComplete }: RideBookingProps) {
           type="time"
           value={time}
           onChange={(e) => setTime(e.target.value)}
+          className="bg-white text-black border-pastel-blue"
         />
       </div>
 
@@ -126,16 +140,21 @@ export function RideBooking({ onBookingComplete }: RideBookingProps) {
           onChange={(e) => setFare(Number(e.target.value))}
           min={1}
           step="0.01"
+          className="bg-white text-black border-pastel-blue"
         />
       </div>
 
       {error && <p className="text-red-500 text-sm">{error}</p>}
 
-      <Button onClick={handleBookRide} className="w-full">
-        Book Ride
-      </Button>
+      <div className="flex justify-center w-full">
+        <Button
+          onClick={handleBookRide}
+          className="w-auto px-6 rounded-full overflow-hidden bg-gradient-to-br from-blue-400 via-blue-500 to-purple-700 shadow-lg hover:bg-blue-800 hover:border-blue-900 hover:text-blue-100 hover:scale-105 transition-transform duration-300 flex items-center"
+          style={{ color: 'white' }}
+        >
+          Book Ride
+        </Button>
+      </div>
     </div>
   );
 }
-
-

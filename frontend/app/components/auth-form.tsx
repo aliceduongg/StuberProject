@@ -100,7 +100,7 @@ export function AuthForm({ type }: AuthFormProps) {
       localStorage.setItem(
         "user",
         JSON.stringify({
-          _id: data.user._id, 
+          _id: data.user._id,
           email: data.user.email,
           role: data.user.role,
           firstName: data.user.firstName,
@@ -128,7 +128,7 @@ export function AuthForm({ type }: AuthFormProps) {
   };
 
   return (
-    <Card className="w-[350px]">
+    <Card className="w-[350px] bg-opacity-80 backdrop-blur-md border-pastel-blue">
       <CardHeader>
         <CardTitle>{type === "login" ? "Login" : "Sign Up"}</CardTitle>
         <CardDescription>
@@ -137,14 +137,15 @@ export function AuthForm({ type }: AuthFormProps) {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit}>
-          <div className="grid w-full items-center gap-4">
+        <form onSubmit={handleSubmit} className="rounded-md">
+          <div className="grid w-full items-center gap-4 black-text">
             {type === "signup" && (
               <>
                 <div className="flex flex-col space-y-1.5">
                   <Label htmlFor="firstName">First Name</Label>
                   <Input
                     id="firstName"
+                    className="rounded-md border-pastel-blue"
                     value={firstName}
                     onChange={(e) => setFirstName(e.target.value)}
                     required
@@ -154,6 +155,7 @@ export function AuthForm({ type }: AuthFormProps) {
                   <Label htmlFor="lastName">Last Name</Label>
                   <Input
                     id="lastName"
+                    className="rounded-md border-pastel-blue"
                     value={lastName}
                     onChange={(e) => setLastName(e.target.value)}
                     required
@@ -164,6 +166,7 @@ export function AuthForm({ type }: AuthFormProps) {
                   <Input
                     id="phone"
                     type="tel"
+                    className="rounded-md border-pastel-blue"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     required
@@ -177,6 +180,7 @@ export function AuthForm({ type }: AuthFormProps) {
               <Input
                 id="email"
                 type="email"
+                className="rounded-md border-pastel-blue"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -187,6 +191,7 @@ export function AuthForm({ type }: AuthFormProps) {
               <Input
                 id="password"
                 type="password"
+                className="rounded-md border-pastel-blue"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
@@ -200,27 +205,38 @@ export function AuthForm({ type }: AuthFormProps) {
                   title="Role"
                   value={role}
                   onChange={(e) => setRole(e.target.value)}
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  className="flex h-10 w-full rounded-md border-pastel-blue border-input bg-white px-3 py-2 text-sm ring-offset-background file:border-pastel-blue file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   <option value="rider">Rider</option>
                   <option value="driver">Driver</option>
                 </select>
               </div>
             )}
-          </div>
-          {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
-          <div className="flex justify-between mt-4">
-            <Button
-              variant="outline"
-              onClick={() =>
-                router.push(type === "login" ? "/signup" : "/login")
-              }
-            >
-              {type === "login" ? "Sign Up" : "Login"}
-            </Button>
-            <Button type="submit">
-              {type === "login" ? "Login" : "Sign Up"}
-            </Button>
+            <div className="flex justify-between mt-4">
+              <Button
+                variant="default"
+                onClick={() =>
+                  router.push(type === "login" ? "/signup" : "/login")
+                }
+                className=""
+                style={{
+                  color: "purple",
+                  fontSize: "10px",
+                  backgroundColor: "#d8e6fd",
+                }}
+              >
+                {type === "login"
+                  ? "Don't have an account? Click Here"
+                  : "Already Have an Account? Click Here"}
+              </Button>
+              <Button
+                type="submit"
+                className="hover:bg-blue-800 hover:border-blue-900 hover:text-blue-100 hover:scale-105 transition-transform duration-300 flex items-center bg-white text-white hover:bg-gray-800 rounded-full overflow-hidden bg-gradient-to-br from-blue-400 via-blue-600 to-purple-600"
+                style={{ color: "white" }}
+              >
+                {type === "login" ? "Login" : "Sign Up"}
+              </Button>
+            </div>
           </div>
         </form>
       </CardContent>
