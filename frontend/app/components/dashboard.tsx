@@ -135,10 +135,6 @@ export function Dashboard() {
   const handleCancelRide = async (rideId: string) => {
     try {
       const token = localStorage.getItem("token");
-      // const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
-      console.log("Current user ID:", user._id);
-
-
       if (!token) {
         throw new Error("No authentication token found");
       }
@@ -156,13 +152,12 @@ export function Dashboard() {
 
       if (!response.ok) {
         const errorData = await response.json();
-        console.log("Error response:", errorData); // Add this
-        throw new Error(errorData.msg || "Failed to cancel ride");
+        // Add an alert or some UI notification to show the error message
+        alert(errorData.msg || "Failed to cancel ride");
+        return;
       }
 
       const updatedRide = await response.json();
-
-      // Update the local state with the new ride information or re-fetch all rides
       setRides((prevRides) =>
         prevRides.map((ride) =>
           ride.id === updatedRide.id ? updatedRide : ride
@@ -173,6 +168,8 @@ export function Dashboard() {
       await fetchRides();
     } catch (error) {
       console.error("Error cancelling ride:", error);
+      // Add user-friendly error message
+      alert("Failed to cancel ride. Please try again.");
     }
   };
 
@@ -180,6 +177,7 @@ export function Dashboard() {
 
   return (
     <div className="space-y-4">
+      {/* User Info Card */}
       <Card className="bg-white bg-opacity-80 backdrop-blur-md border-pastel-blue">
         <CardHeader>
           <CardTitle className="text-pastel-blue">
@@ -187,12 +185,17 @@ export function Dashboard() {
           </CardTitle>
           <CardDescription>You are logged in as a {user.role}</CardDescription>
         </CardHeader>
+
         <CardContent>
+          {/* Rider View - Show Booking Form */}
           {user.role === "rider" && (
             <RideBooking onBookingComplete={handleBookingComplete} />
           )}
+
+          {/* Driver View - Show Available and Accepted Rides */}
           {user.role === "driver" && (
             <div>
+              {/* Available Rides Section */}
               <h3 className="text-lg font-semibold text-pastel-blue mb-4">
                 Available Rides
               </h3>
@@ -249,6 +252,8 @@ export function Dashboard() {
                     </CardContent>
                   </Card>
                 ))}
+
+              {/* Accepted Rides Section */}
               <h3 className="text-lg font-semibold text-pastel-blue mb-4 mt-8">
                 Your Accepted Rides
               </h3>
@@ -309,12 +314,15 @@ export function Dashboard() {
             </div>
           )}
         </CardContent>
+
         <CardFooter>
           <Button variant="outline" onClick={handleLogout}>
             Logout
           </Button>
         </CardFooter>
       </Card>
+
+      {/* Rider's Ride History */}
       {user.role === "rider" && rides.length > 0 && (
         <Card className="mt-4 bg-white bg-opacity-80 backdrop-blur-md border-pastel-blue">
           <CardHeader>
