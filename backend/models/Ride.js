@@ -2,7 +2,7 @@ const { Pickaxe } = require('lucide-react');
 const mongoose = require('mongoose');
 
 const rideSchema = new mongoose.Schema({
-  driver: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  driver: { type: mongoose.Schema.Types.ObjectId, ref: 'User',default: null},
   rider: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   destination: { type: String, required: true },
   pickupLocation: { type: String, required: true },
