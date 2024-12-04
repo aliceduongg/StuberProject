@@ -134,13 +134,16 @@ export function Dashboard() {
   if (!user) return null;
 
   return (
-    <div className="space-y-4">
-      <Card className="bg-white bg-opacity-80 backdrop-blur-md border-pastel-blue">
+    <div className="space-y-4 bg-white">
+      <Card className="bg-white border-pastel-blue">
         <CardHeader>
-          <CardTitle className="text-pastel-blue">
+          <CardTitle className="overflow-hidden bg-gradient-to-br from-blue-400 via-blue-500 to-purple-700 text-transparent bg-clip-text">
             Welcome, {user.email}
           </CardTitle>
-          <CardDescription>You are logged in as a {user.role}</CardDescription>
+          <CardDescription>
+            You are logged in as a{" "}
+            <span className="text-purple-600">{user.role}</span>
+          </CardDescription>
         </CardHeader>
         <CardContent>
           {user.role === "rider" && (
@@ -185,17 +188,19 @@ export function Dashboard() {
                           <span>Time: {ride.time}</span>
                         </div>
                       </div>
-                      <div className="mt-4 flex justify-end space-x-2">
+                      <div className="mt-4 flex justify-end space-x-2 text-white">
                         <Button
                           onClick={() => handleRideAction(ride.id, "accept")}
-                          className="bg-green-500 text-white hover:bg-green-600"
+                          className="text-white rounded-full overflow-hidden bg-gradient-to-br from-green-400 via-green-600"
+                          style={{ color: 'white' }}
                         >
                           <CheckCircle className="mr-2" />
                           Accept
                         </Button>
                         <Button
                           onClick={() => handleRideAction(ride.id, "reject")}
-                          className="bg-red-500 text-white hover:bg-red-600"
+                          className="bg-red-500 text-white hover:bg-red-600 rounded-full overflow-hidden bg-gradient-to-br from-red-400 via-red-700 "
+                          style={{ color: 'white' }}
                         >
                           <XCircle className="mr-2" />
                           Reject
@@ -208,7 +213,11 @@ export function Dashboard() {
           )}
         </CardContent>
         <CardFooter>
-          <Button variant="outline" onClick={handleLogout}>
+          <Button
+            variant="red"
+            onClick={handleLogout}
+            className="bg-red-500 text-white border-red-500 hover:bg-red-600 hover:border-red-600 rounded-full"
+          >
             Logout
           </Button>
         </CardFooter>

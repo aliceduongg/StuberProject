@@ -19,3 +19,13 @@ html, body {
     background-position: center; /* Centers the most important part of the image */
     background-attachment: fixed; /* Optional: Adds a parallax effect */
   }
+
+  .form-card {
+    border-radius: 12px;
+    overflow: hidden; /* Ensures child elements respect the rounded corners */
+  }
+
+  body {
+    background-color: white; /* Ensures a white background for the entire page */
+    color: black; /* Ensures text remains readable */
+  }
