@@ -30,8 +30,13 @@ export const fetchSuggestions = async (input: string): Promise<any[]> => {
   }
 };
 
+interface Location {
+  latitude: number;
+  longitude: number;
+}
+
 interface AutocompleteProps {
-  onSelect?: (destination: string) => void;
+  onSelect: (location: Location) => void;
 }
 
 const Autocomplete: React.FC<AutocompleteProps> = ({ onSelect }) => {
@@ -46,13 +51,16 @@ const Autocomplete: React.FC<AutocompleteProps> = ({ onSelect }) => {
 
   const handleSelect = (item: any) => {
     const selectedDestination = item.formattedAddress;
+    const location: Location = {
+      latitude: item.latitude,
+      longitude: item.longitude
+    };
+
     setQuery(selectedDestination);
     setResults([]);
 
-    // If an onSelect prop is provided (from parent component), call it
-    if (onSelect) {
-      onSelect(selectedDestination);
-    }
+    // Call onSelect with the location object
+    onSelect(location);
   };
 
   return (
