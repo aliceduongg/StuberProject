@@ -143,16 +143,22 @@ router.put('/:id/cancel', auth, async (req, res) => {
     if (!ride) {
       return res.status(404).json({ msg: 'Ride not found' });
     }
-    
-    if (ride.rider.toString() !== req.user.id) {
+
+    // Add debugging logs
+    console.log('Ride rider ID:', ride.rider);
+    console.log('Request user ID:', req.user.id);
+
+    // Convert both IDs to strings for comparison
+    const riderIdStr = ride.rider.toString();
+    const userIdStr = req.user.id.toString();
+
+    if (riderIdStr !== userIdStr) {
       return res.status(401).json({ msg: 'Not authorized to cancel this ride' });
     }
 
-    // Update ride status to cancelled
     ride.status = 'cancelled';
     const updatedRide = await ride.save();
 
-    // Transform the ride to include id before sending response
     const rideWithId = {
       ...updatedRide.toObject(),
       id: updatedRide._id
