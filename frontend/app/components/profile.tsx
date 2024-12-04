@@ -124,7 +124,7 @@ export function Profile() {
   if (!user) return null;
 
   return (
-    <Card className="w-[350px] bg-white bg-opacity-80 backdrop-blur-md border-pastel-blue">
+    <Card className="w-[350px] bg-white bg-opacity-80 backdrop-blur-md border-pastel-blue form-card">
       <CardHeader>
         <CardTitle className="text-black-blue flex items-center">
           <User className="mr-2" />
@@ -136,24 +136,51 @@ export function Profile() {
         <form onSubmit={(e) => e.preventDefault()}>
           <div className="grid w-full items-center gap-4">
             <div className="flex flex-col space-y-1.5">
-              <Label htmlFor="firstName" className="text-black">First Name</Label>
-              <Input id="firstName" value={firstName} onChange={(e) => setFirstName(e.target.value)} className="flex-grow border-pastel-blue" />
+              <Label htmlFor="firstName" className="text-black">
+                First Name
+              </Label>
+              <Input
+                id="firstName"
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                className="flex-grow border-pastel-blue"
+              />
             </div>
             <div className="flex flex-col space-y-1.5">
-              <Label htmlFor="lastName" className="text-black">Last Name</Label>
-              <Input id="lastName" value={lastName} onChange={(e) => setLastName(e.target.value)} className="flex-grow border-pastel-blue" />
+              <Label htmlFor="lastName" className="text-black">
+                Last Name
+              </Label>
+              <Input
+                id="lastName"
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                className="flex-grow border-pastel-blue"
+              />
             </div>
             <div className="flex flex-col space-y-1.5">
-              <Label htmlFor="phone" className="text-black">Phone</Label>
+              <Label htmlFor="phone" className="text-black">
+                Phone
+              </Label>
               <div className="flex items-center">
                 <Phone className="text-black mr-2" />
-                <Input id="phone" value={phone} onChange={(e) => setPhone(e.target.value)} className="flex-grow border-pastel-blue" />
+                <Input
+                  id="phone"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  className="flex-grow border-pastel-blue"
+                />
               </div>
             </div>
             <div className="flex flex-col space-y-1.5">
-              <Label htmlFor="email" className="text-black">Email</Label>
-              <Input id="email" value={user.email} disabled className="flex-grow border-pastel-blue bg-gray-100" />
-                
+              <Label htmlFor="email" className="text-black">
+                Email
+              </Label>
+              <Input
+                id="email"
+                value={user.email}
+                disabled
+                className="flex-grow border-pastel-blue bg-gray-100"
+              />
             </div>
             {user.role === "driver" && (
               <div className="flex flex-col space-y-1.5">
@@ -173,8 +200,11 @@ export function Profile() {
         </form>
       </CardContent>
       <CardFooter>
-        <Button onClick={handleUpdateProfile} className="overflow-hidden bg-gradient-to-br from-blue-400 via-blue-600 to-purple-600"
-        style={{ color: 'white' }}>
+        <Button
+          onClick={handleUpdateProfile}
+          className="overflow-hidden bg-gradient-to-br from-blue-400 via-blue-600 to-purple-600 w-full"
+          style={{ color: "white" }}
+        >
           Update Profile
         </Button>
       </CardFooter>

@@ -128,7 +128,7 @@ export function AuthForm({ type }: AuthFormProps) {
   };
 
   return (
-    <Card className="w-[350px] bg-opacity-80 backdrop-blur-md border-pastel-blue">
+    <Card className="w-[350px] bg-opacity-80 backdrop-blur-md border-pastel-blue form-card">
       <CardHeader>
         <CardTitle>{type === "login" ? "Login" : "Sign Up"}</CardTitle>
         <CardDescription>
