@@ -203,7 +203,7 @@ export function AuthForm({ type }: AuthFormProps) {
             <Button
               variant="default"
               onClick={() => router.push(type === "login" ? "/signup" : "/login")}
-              className="bg-gray-200 text-gray-700 text-sm hover:bg-gray-300 hover:text-gray-900 p-2 rounded-md transition-colors duration-200" // Added rounded corners
+              className="" // Added rounded corners
               style={{ color: 'purple', fontSize:'10px', backgroundColor: '#d8e6fd' }}
             >
               {type === "login" ? "Dont have an account? Click Here" : "Already Have an Account? Click Here"}

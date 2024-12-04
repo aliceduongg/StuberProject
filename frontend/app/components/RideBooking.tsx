@@ -107,7 +107,8 @@ export function RideBooking({ onBookingComplete }: RideBookingProps) {
           value={passengers}
           onChange={(e) => setPassengers(Number(e.target.value))}
           min={1}
-          className="bg-white text-black"
+          className="bg-white text-black border-pastel-blue"
+          
         />
       </div>
 
@@ -117,7 +118,7 @@ export function RideBooking({ onBookingComplete }: RideBookingProps) {
           type="date"
           value={date}
           onChange={(e) => setDate(e.target.value)}
-          className="bg-white text-black"
+          className="bg-white text-black border-pastel-blue"
         />
       </div>
 
@@ -127,7 +128,7 @@ export function RideBooking({ onBookingComplete }: RideBookingProps) {
           type="time"
           value={time}
           onChange={(e) => setTime(e.target.value)}
-          className="bg-white text-black"
+          className="bg-white text-black border-pastel-blue"
         />
       </div>
 
@@ -139,7 +140,7 @@ export function RideBooking({ onBookingComplete }: RideBookingProps) {
           onChange={(e) => setFare(Number(e.target.value))}
           min={1}
           step="0.01"
-          className="bg-white text-black"
+          className="bg-white text-black border-pastel-blue"
         />
       </div>
 
@@ -148,7 +149,7 @@ export function RideBooking({ onBookingComplete }: RideBookingProps) {
       <div className="flex justify-center w-full">
         <Button
           onClick={handleBookRide}
-          className="w-auto px-6 rounded-full overflow-hidden bg-gradient-to-br from-blue-400 via-blue-500 to-purple-700"
+          className="w-auto px-6 rounded-full overflow-hidden bg-gradient-to-br from-blue-400 via-blue-500 to-purple-700 shadow-lg hover:bg-blue-800 hover:border-blue-900 hover:text-blue-100 hover:scale-105 transition-transform duration-300 flex items-center"
           style={{ color: 'white' }}
         >
           Book Ride

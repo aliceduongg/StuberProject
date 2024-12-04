@@ -59,7 +59,7 @@ const Autocomplete: React.FC<AutocompleteProps> = ({ onSelect }) => {
     <div className="relative w-full max-w-md mx-auto">
       <input
         type="text"
-        className="w-full border border-gray-300 rounded-full p-2 mb-2 z-10 relative bg-white text-black"
+        className="w-full border border-pastel-blue rounded-full p-2 mb-2 z-10 relative bg-white text-black"
         placeholder="Search for a place..."
         value={query}
         onChange={(e) => handleInputChange(e.target.value)}
@@ -69,7 +69,7 @@ const Autocomplete: React.FC<AutocompleteProps> = ({ onSelect }) => {
           {results.map((item) => (
             <li
               key={`${item.formattedAddress}-${item.latitude}-${item.longitude}`}
-              className="p-2 hover:bg-neutral-100 cursor-pointer border-b last:border-b-0 border-gray-200 text-black bg-white"
+              className="p-2 hover:bg-neutral-100 cursor-pointer border-b last:border-b-0 border-pastel-blue text-black bg-white"
               onClick={() => handleSelect(item)}
             >
               {item.formattedAddress}

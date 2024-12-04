@@ -119,6 +119,7 @@ export default function DriverInformation() {
                   accept=".jpg,.jpeg,.png,.pdf"
                   onChange={(e) => handleFileChange(e, setDriverLicense)}
                   required
+                  className="border-pastel-blue"
                 />
                 {driverLicense && (
                   <p className="text-sm text-green-600">
@@ -135,6 +136,7 @@ export default function DriverInformation() {
                   accept=".jpg,.jpeg,.png"
                   onChange={(e) => handleFileChange(e, setVehicleImage)}
                   required
+                  className="border-pastel-blue"
                 />
                 {vehicleImage && (
                   <p className="text-sm text-green-600">
@@ -152,12 +154,13 @@ export default function DriverInformation() {
                   onChange={(e) => setLicensePlate(e.target.value)}
                   placeholder="Enter license plate number"
                   required
+                  className="border-pastel-blue"
                 />
               </div>
 
               {error && <div className="text-red-500 text-sm">{error}</div>}
 
-              <Button type="submit" className="w-full overflow-hidden bg-gradient-to-br from-blue-400 via-blue-500 to-purple-700 "style={{ color: 'white' }} disabled={isSubmitting}>
+              <Button type="submit" className="w-full rounded-full overflow-hidden bg-gradient-to-br from-blue-400 via-blue-500 to-purple-700 "style={{ color: 'white' }} disabled={isSubmitting}>
                 {isSubmitting ? "Submitting..." : "Submit Information"}
               </Button>
             </form>

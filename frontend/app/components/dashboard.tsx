@@ -65,7 +65,6 @@ export function Dashboard() {
       const data = await response.json();
       setRides(data);
     } catch (error) {
-      console.error("Error fetching rides:", error);
     }
   }, []);
 
@@ -134,15 +133,15 @@ export function Dashboard() {
   if (!user) return null;
 
   return (
-    <div className="space-y-4 bg-white">
-      <Card className="bg-white border-pastel-blue">
+    <div className="space-y-4 overflow-hidden bg-gradient-to-br from-blue-400 via-blue-500 to-purple-70">
+      <Card className=" border-pastel-blue overflow-hidden bg-gradient-to-br from-purple-300 via-blue-500 to-purple-700">
         <CardHeader>
-          <CardTitle className="overflow-hidden bg-gradient-to-br from-blue-400 via-blue-500 to-purple-700 text-transparent bg-clip-text">
-            Welcome, {user.email}
+          <CardTitle className="overflow-hidden text-black text-2xl text-[32px] font-bold">
+            Welcome, {" "}<span className="text-blue-600 ">{user.email}</span> 
           </CardTitle>
-          <CardDescription>
+          <CardDescription className="" style={{ color:'black', fontSize:'17px'}}>
             You are logged in as a{" "}
-            <span className="text-purple-600">{user.role}</span>
+            <span className="text-blue-600">{user.role}</span>
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -151,7 +150,7 @@ export function Dashboard() {
           )}
           {user.role === "driver" && (
             <div>
-              <h3 className="text-lg font-semibold text-pastel-blue mb-4">
+              <h3 className="text-lg font-semibold text-black mb-4">
                 Available Rides
               </h3>
               {rides
@@ -159,7 +158,7 @@ export function Dashboard() {
                 .map((ride) => (
                   <Card
                     key={`ride-card-${ride.id}`}
-                    className="mt-4 bg-white bg-opacity-80 backdrop-blur-md border-pastel-yellow"
+                    className="mt-4 bg-white bg-opacity-80 backdrop-blur-md border-pastel-blue"
                   >
                     <CardContent className="p-4">
                       <div className="space-y-2">
@@ -191,7 +190,7 @@ export function Dashboard() {
                       <div className="mt-4 flex justify-end space-x-2 text-white">
                         <Button
                           onClick={() => handleRideAction(ride.id, "accept")}
-                          className="text-white rounded-full overflow-hidden bg-gradient-to-br from-green-400 via-green-600"
+                          className="text-white rounded-full overflow-hidden bg-gradient-to-br from-green-400 via-green-600 to-green-400 shadow-lg hover:bg-blue-800 hover:border-blue-900 hover:text-blue-100 hover:scale-105 transition-transform duration-300 flex items-center"
                           style={{ color: 'white' }}
                         >
                           <CheckCircle className="mr-2" />
@@ -199,7 +198,7 @@ export function Dashboard() {
                         </Button>
                         <Button
                           onClick={() => handleRideAction(ride.id, "reject")}
-                          className="bg-red-500 text-white hover:bg-red-600 rounded-full overflow-hidden bg-gradient-to-br from-red-400 via-red-700 "
+                          className="bg-red-500 text-white hover:bg-red-600 rounded-full overflow-hidden bg-gradient-to-br from-red-400 via-red-700 to-red-400 shadow-lg hover:bg-blue-800 hover:border-blue-900 hover:text-blue-100 hover:scale-105 transition-transform duration-300 flex items-center"
                           style={{ color: 'white' }}
                         >
                           <XCircle className="mr-2" />

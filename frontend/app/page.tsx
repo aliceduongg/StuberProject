@@ -33,7 +33,7 @@ export default function Home() {
 
             <Link href="/signup">
               <Button
-                className="text-white px-6 py-3 rounded-full shadow-lg hover:bg-blue-800 hover:border-blue-900 hover:text-blue-100 hover:scale-105 transition-transform duration-300 flex items-center overflow-hidden bg-gradient-to-br from-purple-400 via-purple-500 to-blue-700"
+                className="text-white px-6 py-3 rounded-full shadow-lg hover:bg-blue-800 hover:border-blue-900 hover:text-blue-100 hover:scale-105 transition-transform duration-300 flex items-center overflow-hidden bg-gradient-to-br from-blue-400 via-blue-500 to-purple-700"
                 style={{ color: 'white' }}
               >
                 <UserPlus className="mr-2" />
