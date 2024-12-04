@@ -120,9 +120,6 @@ router.put('/:id/:action', auth, async (req, res) => {
       ride.driver = req.user.id;
     }
 
-    // ride.status = action === 'accept' ? 'accepted' : 'rejected';
-    // ride.driver = req.user.id;
-
     const updatedRide = await ride.save();
     // Transform the response to match frontend expectations
     res.json({
@@ -144,15 +141,7 @@ router.put('/:id/cancel', auth, async (req, res) => {
       return res.status(404).json({ msg: 'Ride not found' });
     }
 
-    // Check if the user is either the rider or the driver of the ride
-    const isRider = ride.rider.toString() === req.user.id.toString();
-    const isDriver = ride.driver && ride.driver.toString() === req.user.id.toString();
-
-    if (!isRider && !isDriver) {
-      return res.status(401).json({ msg: 'Not authorized to cancel this ride' });
-    }
-
-    // Only allow cancellation if ride status is 'pending' or 'accepted'
+    // Only check if ride status is 'pending' or 'accepted'
     if (!['pending', 'accepted'].includes(ride.status)) {
       return res.status(400).json({ msg: 'Ride cannot be cancelled in its current state' });
     }

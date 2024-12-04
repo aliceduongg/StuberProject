@@ -152,23 +152,23 @@ export function Dashboard() {
 
       if (!response.ok) {
         const errorData = await response.json();
-        // Add an alert or some UI notification to show the error message
         alert(errorData.msg || "Failed to cancel ride");
         return;
       }
 
       const updatedRide = await response.json();
+
+      // Update the rides state immediately
       setRides((prevRides) =>
         prevRides.map((ride) =>
-          ride.id === updatedRide.id ? updatedRide : ride
+          ride.id === updatedRide.id ? { ...ride, status: "cancelled" } : ride
         )
       );
 
-      // Re-fetch rides to ensure the latest state
+      // Refresh the rides list
       await fetchRides();
     } catch (error) {
       console.error("Error cancelling ride:", error);
-      // Add user-friendly error message
       alert("Failed to cancel ride. Please try again.");
     }
   };
