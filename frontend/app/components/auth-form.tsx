@@ -31,8 +31,12 @@ export function AuthForm({ type }: AuthFormProps) {
     e.preventDefault();
 
     // Validation for both login and signup
-    if (!email || !password) {
-      setError("Please fill in all required fields.");
+    if (
+      !email ||
+      !password ||
+      (type === "signup" && (!role || !firstName || !lastName))
+    ) {
+      setError("Please fill in all the fields.");
       return;
     }
 
@@ -65,22 +69,25 @@ export function AuthForm({ type }: AuthFormProps) {
     try {
       // Use different endpoints based on type
       const endpoint = type === "login" ? "login" : "signup";
-      const response = await fetch(`http://localhost:8080/api/auth/${endpoint}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email,
-          password,
-          ...(type === "signup" && {
-            firstName,
-            lastName,
-            phone,
-            role,
+      const response = await fetch(
+        `http://localhost:8080/api/auth/${endpoint}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email,
+            password,
+            ...(type === "signup" && {
+              firstName,
+              lastName,
+              phone,
+              role,
+            }),
           }),
-        }),
-      });
+        }
+      );
 
       const data = await response.json();
 
@@ -93,7 +100,7 @@ export function AuthForm({ type }: AuthFormProps) {
       localStorage.setItem(
         "user",
         JSON.stringify({
-          id: data.user._id,
+          _id: data.user._id,
           email: data.user.email,
           role: data.user.role,
           firstName: data.user.firstName,
@@ -103,9 +110,16 @@ export function AuthForm({ type }: AuthFormProps) {
       );
 
       // Redirect based on role
-      if (data.user.role === "driver") {
+      if (
+        data.user.role === "driver" &&
+        (!data.user.driverLicense ||
+          !data.user.vehicleImage ||
+          !data.user.licensePlateNumber)
+      ) {
+        // Only redirect to driver-information if documents are missing
         router.push("/driver-information");
       } else {
+        // If driver has already uploaded documents, go straight to dashboard
         router.push("/dashboard");
       }
     } catch (err) {
@@ -118,7 +132,8 @@ export function AuthForm({ type }: AuthFormProps) {
       <CardHeader>
         <CardTitle>{type === "login" ? "Login" : "Sign Up"}</CardTitle>
         <CardDescription>
-          Enter your details to {type === "login" ? "login" : "create an account"}.
+          Enter your details to{" "}
+          {type === "login" ? "login" : "create an account"}.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -130,7 +145,7 @@ export function AuthForm({ type }: AuthFormProps) {
                   <Label htmlFor="firstName">First Name</Label>
                   <Input
                     id="firstName"
-                    className="rounded-md border-pastel-blue" 
+                    className="rounded-md border-pastel-blue"
                     value={firstName}
                     onChange={(e) => setFirstName(e.target.value)}
                     required
@@ -171,12 +186,12 @@ export function AuthForm({ type }: AuthFormProps) {
                 required
               />
             </div>
-            <div className="flex flex-col space-y-1.5" >
+            <div className="flex flex-col space-y-1.5">
               <Label htmlFor="password">Password</Label>
               <Input
                 id="password"
                 type="password"
-                 className="rounded-md border-pastel-blue"
+                className="rounded-md border-pastel-blue"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
@@ -197,21 +212,31 @@ export function AuthForm({ type }: AuthFormProps) {
                 </select>
               </div>
             )}
-          </div>
-          {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
-          <div className="flex justify-between mt-4 ">
-            <Button
-              variant="default"
-              onClick={() => router.push(type === "login" ? "/signup" : "/login")}
-              className="" // Added rounded corners
-              style={{ color: 'purple', fontSize:'10px', backgroundColor: '#d8e6fd' }}
-            >
-              {type === "login" ? "Dont have an account? Click Here" : "Already Have an Account? Click Here"}
-            </Button>
-            <Button type="submit" className=" hover:bg-blue-800 hover:border-blue-900 hover:text-blue-100 hover:scale-105 transition-transform duration-300 flex items-center bg-white text-white hover:bg-gray-800 rounded-full overflow-hidden bg-gradient-to-br from-blue-400 via-blue-600 to-purple-600"
-            style={{ color: 'white' }}>
-              {type === "login" ? "Login" : "Sign Up"}
-            </Button>
+            <div className="flex justify-between mt-4">
+              <Button
+                variant="default"
+                onClick={() =>
+                  router.push(type === "login" ? "/signup" : "/login")
+                }
+                className=""
+                style={{
+                  color: "purple",
+                  fontSize: "10px",
+                  backgroundColor: "#d8e6fd",
+                }}
+              >
+                {type === "login"
+                  ? "Don't have an account? Click Here"
+                  : "Already Have an Account? Click Here"}
+              </Button>
+              <Button
+                type="submit"
+                className="hover:bg-blue-800 hover:border-blue-900 hover:text-blue-100 hover:scale-105 transition-transform duration-300 flex items-center bg-white text-white hover:bg-gray-800 rounded-full overflow-hidden bg-gradient-to-br from-blue-400 via-blue-600 to-purple-600"
+                style={{ color: "white" }}
+              >
+                {type === "login" ? "Login" : "Sign Up"}
+              </Button>
+            </div>
           </div>
         </form>
       </CardContent>

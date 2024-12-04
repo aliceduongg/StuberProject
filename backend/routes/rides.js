@@ -51,7 +51,20 @@ router.post('/', auth, async (req, res) => {
 // Get all rides
 router.get('/', auth, async (req, res) => {
   try {
-    const rides = await Ride.find().sort({ date: -1 });
+    let rides;
+    if (req.user.role === 'rider') {
+      // Riders only see their own rides
+      rides = await Ride.find({ rider: req.user.id }).sort({ date: -1 });
+    } else if (req.user.role === 'driver') {
+      // Drivers see all pending rides and rides they've accepted/rejected
+      rides = await Ride.find({
+        $or: [
+          { status: 'pending' },
+          { driver: req.user.id }
+        ]
+      }).sort({ date: -1 });
+    }
+
     // Transform the rides to include id
     const ridesWithId = rides.map(ride => ({
       ...ride.toObject(),
@@ -107,15 +120,41 @@ router.put('/:id/:action', auth, async (req, res) => {
       ride.driver = req.user.id;
     }
 
-    // ride.status = action === 'accept' ? 'accepted' : 'rejected';
-    // ride.driver = req.user.id;
-
     const updatedRide = await ride.save();
     // Transform the response to match frontend expectations
     res.json({
       ...updatedRide.toObject(),
       id: updatedRide._id
     });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ msg: 'Server error' });
+  }
+});
+
+router.put('/:id/cancel', auth, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const ride = await Ride.findById(id);
+
+    if (!ride) {
+      return res.status(404).json({ msg: 'Ride not found' });
+    }
+
+    // Only check if ride status is 'pending' or 'accepted'
+    if (!['pending', 'accepted'].includes(ride.status)) {
+      return res.status(400).json({ msg: 'Ride cannot be cancelled in its current state' });
+    }
+
+    ride.status = 'cancelled';
+    const updatedRide = await ride.save();
+
+    const rideWithId = {
+      ...updatedRide.toObject(),
+      id: updatedRide._id
+    };
+
+    res.json(rideWithId);
   } catch (err) {
     console.error(err.message);
     res.status(500).json({ msg: 'Server error' });

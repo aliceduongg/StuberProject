@@ -45,6 +45,7 @@ router.post('/signup', async (req, res) => {
         res.json({
           token,
           user: {
+            _id: user.id,
             email: user.email,
             role: user.role,
             firstName: user.firstName,
@@ -87,8 +88,12 @@ router.post('/login', async (req, res) => {
       res.json({
         token,
         user: {
+          _id: user.id,
           email: user.email,
-          role: user.role
+          role: user.role,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          licensePlateNumber: user.licensePlateNumber 
         }
       });
     });

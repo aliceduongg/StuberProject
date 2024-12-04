@@ -26,6 +26,7 @@ import { RideBooking } from "./RideBooking";
 type User = {
   email: string;
   role: "rider" | "driver";
+  firstName: string;
 };
 
 type Ride = {
@@ -35,12 +36,12 @@ type Ride = {
   passengers: number;
   date: string;
   time: string;
-  status: "pending" | "accepted" | "rejected";
+  status: "pending" | "accepted" | "rejected" | "cancelled";
   fare: number;
 };
 
 export function Dashboard() {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<any>(null);
   const [rides, setRides] = useState<Ride[]>([]);
   const router = useRouter();
 
@@ -70,9 +71,10 @@ export function Dashboard() {
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
-    console.log("Token:", localStorage.getItem("token"));
     if (storedUser) {
-      setUser(JSON.parse(storedUser));
+      const parsedUser = JSON.parse(storedUser);
+      console.log("Parsed user:", parsedUser); //Debug line
+      setUser(parsedUser);
     } else {
       router.push("/login");
     }
@@ -90,7 +92,6 @@ export function Dashboard() {
     fetchRides();
     setRides((prevRides) => [...prevRides, newRide]);
   };
-
   const handleRideAction = async (
     rideId: string,
     action: "accept" | "reject"
@@ -130,6 +131,47 @@ export function Dashboard() {
     }
   };
 
+  const handleCancelRide = async (rideId: string) => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        throw new Error("No authentication token found");
+      }
+
+      const response = await fetch(
+        `http://localhost:8080/api/rides/${rideId}/cancel`,
+        {
+          method: "PUT",
+          headers: {
+            "x-auth-token": token,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        alert(errorData.msg || "Failed to cancel ride");
+        return;
+      }
+
+      const updatedRide = await response.json();
+
+      // Update the rides state immediately
+      setRides((prevRides) =>
+        prevRides.map((ride) =>
+          ride.id === updatedRide.id ? { ...ride, status: "cancelled" } : ride
+        )
+      );
+
+      // Refresh the rides list
+      await fetchRides();
+    } catch (error) {
+      console.error("Error cancelling ride:", error);
+      alert("Failed to cancel ride. Please try again.");
+    }
+  };
+
   if (!user) return null;
 
   return (
@@ -138,16 +180,21 @@ export function Dashboard() {
         <CardHeader>
           <CardTitle className="overflow-hidden text-black text-2xl text-[32px] font-bold">
             Welcome, {" "}<span className="text-blue-600 ">{user.email}</span> 
+
           </CardTitle>
           <CardDescription className="" style={{ color:'black', fontSize:'17px'}}>
             You are logged in as a{" "}
             <span className="text-blue-600">{user.role}</span>
           </CardDescription>
         </CardHeader>
+
         <CardContent>
+          {/* Rider View - Show Booking Form */}
           {user.role === "rider" && (
             <RideBooking onBookingComplete={handleBookingComplete} />
           )}
+
+          {/* Driver View - Show Available and Accepted Rides */}
           {user.role === "driver" && (
             <div>
               <h3 className="text-lg font-semibold text-black mb-4">
@@ -208,9 +255,69 @@ export function Dashboard() {
                     </CardContent>
                   </Card>
                 ))}
+
+              {/* Accepted Rides Section */}
+              <h3 className="text-lg font-semibold text-pastel-blue mb-4 mt-8">
+                Your Accepted Rides
+              </h3>
+              {rides
+                .filter((ride) => ride.status === "accepted")
+                .map((ride) => (
+                  <Card
+                    key={`accepted-ride-${ride.id}`}
+                    className="mt-4 bg-white bg-opacity-80 backdrop-blur-md border-green-200"
+                  >
+                    <CardContent className="p-4">
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center">
+                            <MapPin className="text-green-600 mr-2" />
+                            <span className="font-semibold">
+                              Destination: {ride.destination}
+                            </span>
+                          </div>
+                          <div className="flex items-center text-green-600">
+                            <DollarSign className="mr-1" />
+                            <span className="font-bold">{ride.fare}</span>
+                          </div>
+                        </div>
+                        <div className="flex items-center">
+                          <Users className="text-green-600 mr-2" />
+                          <span>Passengers: {ride.passengers}</span>
+                        </div>
+                        <div className="flex items-center">
+                          <Calendar className="text-green-600 mr-2" />
+                          <span>Date: {ride.date}</span>
+                        </div>
+                        <div className="flex items-center">
+                          <Clock className="text-green-600 mr-2" />
+                          <span>Time: {ride.time}</span>
+                        </div>
+                        <div className="flex items-center">
+                          <MapPin className="text-green-600 mr-2" />
+                          <span>Pickup Location: {ride.pickupLocation}</span>
+                        </div>
+                        <div className="mt-2 inline-flex items-center px-2 py-1 bg-green-100 text-green-800 rounded-full">
+                          <CheckCircle className="h-4 w-4 mr-1" />
+                          Accepted
+                        </div>
+                        <div className="mt-4 flex justify-end space-x-2">
+                          <Button
+                            onClick={() => handleCancelRide(ride.id)}
+                            className="bg-red-500 text-white hover:bg-red-600"
+                          >
+                            <XCircle className="mr-2" />
+                            Cancel
+                          </Button>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
             </div>
           )}
         </CardContent>
+
         <CardFooter>
           <Button
             variant="red"
@@ -221,6 +328,8 @@ export function Dashboard() {
           </Button>
         </CardFooter>
       </Card>
+
+      {/* Rider's Ride History */}
       {user.role === "rider" && rides.length > 0 && (
         <Card className="mt-4 bg-white bg-opacity-80 backdrop-blur-md border-pastel-blue">
           <CardHeader>
@@ -236,7 +345,7 @@ export function Dashboard() {
                       ? `ride-list-${ride.id}`
                       : `ride-list-fallback-${index}`
                   }
-                  className="mb-2 flex items-center justify-between"
+                  className="mb-2 flex items-center justify-between p-4 border rounded-lg"
                 >
                   <div className="flex items-center">
                     <Car className="text-pastel-blue mr-2" />
@@ -249,15 +358,25 @@ export function Dashboard() {
                       </span>
                     </span>
                   </div>
-                  <span
-                    className={`font-semibold ${
-                      ride.status === "accepted"
-                        ? "text-green-600"
-                        : "text-yellow-600"
-                    }`}
-                  >
-                    {ride.status.charAt(0).toUpperCase() + ride.status.slice(1)}
-                  </span>
+                  <div className="flex items-center space-x-4">
+                    <span
+                      className={`font-semibold ${
+                        ride.status === "accepted"
+                          ? "text-green-600"
+                          : "text-yellow-600"
+                      }`}
+                    >
+                      {ride.status.charAt(0).toUpperCase() +
+                        ride.status.slice(1)}
+                    </span>
+                    <Button
+                      onClick={() => handleCancelRide(ride.id)}
+                      className="bg-red-500 text-white hover:bg-red-600"
+                    >
+                      <XCircle className="mr-2" />
+                      Cancel
+                    </Button>
+                  </div>
                 </div>
               ))}
           </CardContent>
