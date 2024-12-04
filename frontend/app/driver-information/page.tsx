@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -43,6 +43,25 @@ export default function DriverInformation() {
       setError(null);
     }
   };
+  
+  useEffect(() => {
+    const checkDriverInfo = async () => {
+      const token = localStorage.getItem("token");
+      if (token) {
+        const response = await fetch("http://localhost:8080/api/driver/information", {
+          headers: {
+            "x-auth-token": token
+          }
+        });
+        const data = await response.json();
+        if (data.user.driverLicense && data.user.vehicleImage && data.user.licensePlateNumber) {
+          router.push("/dashboard");
+        }
+      }
+    };
+    
+    checkDriverInfo();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

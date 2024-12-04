@@ -29,7 +29,7 @@ const upload = multer({
 });
 
 // Fix: Combine the route handler properly
-router.post("/information", 
+router.post("/information",
     auth,
     upload.fields([
         { name: 'driverLicense', maxCount: 1 },
@@ -66,5 +66,23 @@ router.post("/information",
         }
     }
 );
+
+router.get("/information", auth, async (req, res) => {
+    try {
+        const user = await User.findById(req.user.id);
+        if (!user) {
+            return res.status(404).json({ msg: 'User not found' });
+        }
+        res.json({
+            user: {
+                driverLicense: user.driverLicense,
+                vehicleImage: user.vehicleImage,
+                licensePlateNumber: user.licensePlateNumber
+            }
+        });
+    } catch (err) {
+        res.status(500).json({ msg: 'Server error' });
+    }
+});
 
 module.exports = router;
