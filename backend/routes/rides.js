@@ -77,6 +77,41 @@ router.get('/', auth, async (req, res) => {
   }
 });
 
+router.put('/:id/cancel', auth, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const ride = await Ride.findById(id);
+
+    if (!ride) {
+      return res.status(404).json({ msg: 'Ride not found' });
+    }
+
+    // Only check if ride status is 'pending' or 'accepted'
+    if (!['pending', 'accepted'].includes(ride.status)) {
+      return res.status(400).json({ msg: 'Ride cannot be cancelled in its current state' });
+    }
+
+    ride.status = 'cancelled';
+    const updatedRide = await ride.save();
+
+    const rideWithId = {
+      ...updatedRide.toObject(),
+      id: updatedRide._id
+    };
+
+    res.json(rideWithId);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ msg: 'Server error' });
+  }
+});
+
+
+
+
+
+
+
 // Update ride status
 router.put('/:id/:action', auth, async (req, res) => {
   try {
@@ -126,35 +161,6 @@ router.put('/:id/:action', auth, async (req, res) => {
       ...updatedRide.toObject(),
       id: updatedRide._id
     });
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).json({ msg: 'Server error' });
-  }
-});
-
-router.put('/:id/cancel', auth, async (req, res) => {
-  try {
-    const { id } = req.params;
-    const ride = await Ride.findById(id);
-
-    if (!ride) {
-      return res.status(404).json({ msg: 'Ride not found' });
-    }
-
-    // Only check if ride status is 'pending' or 'accepted'
-    if (!['pending', 'accepted'].includes(ride.status)) {
-      return res.status(400).json({ msg: 'Ride cannot be cancelled in its current state' });
-    }
-
-    ride.status = 'cancelled';
-    const updatedRide = await ride.save();
-
-    const rideWithId = {
-      ...updatedRide.toObject(),
-      id: updatedRide._id
-    };
-
-    res.json(rideWithId);
   } catch (err) {
     console.error(err.message);
     res.status(500).json({ msg: 'Server error' });

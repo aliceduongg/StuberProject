@@ -179,7 +179,7 @@ export function Dashboard() {
       <Card className=" border-pastel-blue overflow-hidden bg-gradient-to-br from-purple-300 via-blue-500 to-purple-700">
         <CardHeader>
           <CardTitle className="overflow-hidden text-black text-2xl text-[32px] font-bold">
-            Welcome, {" "}<span className="text-blue-600 ">{user.email}</span> 
+            Welcome, {" "}<span className="text-blue-600 ">{user.firstName}</span> 
 
           </CardTitle>
           <CardDescription className="" style={{ color:'black', fontSize:'17px'}}>
