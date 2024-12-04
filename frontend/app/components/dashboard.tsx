@@ -135,6 +135,10 @@ export function Dashboard() {
   const handleCancelRide = async (rideId: string) => {
     try {
       const token = localStorage.getItem("token");
+      const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
+      console.log("Current user:", currentUser);
+      console.log("Ride ID:", rideId); 
+
       if (!token) {
         throw new Error("No authentication token found");
       }
@@ -151,18 +155,24 @@ export function Dashboard() {
       );
 
       if (!response.ok) {
-        throw new Error("Failed to cancel ride");
+        const errorData = await response.json();
+        console.log("Error response:", errorData); // Add this
+        throw new Error(errorData.msg || "Failed to cancel ride");
       }
 
-      // Update the rides list to show the cancelled status
+      const updatedRide = await response.json();
+
+      // Update the local state with the new ride information or re-fetch all rides
       setRides((prevRides) =>
         prevRides.map((ride) =>
-          ride.id === rideId ? { ...ride, status: "cancelled" } : ride
+          ride.id === updatedRide.id ? updatedRide : ride
         )
       );
+
+      // Re-fetch rides to ensure the latest state
+      await fetchRides();
     } catch (error) {
       console.error("Error cancelling ride:", error);
-      alert("Failed to cancel ride");
     }
   };
 
@@ -279,16 +289,18 @@ export function Dashboard() {
                           <MapPin className="text-green-600 mr-2" />
                           <span>Pickup Location: {ride.pickupLocation}</span>
                         </div>
+                        <div className="mt-2 inline-flex items-center px-2 py-1 bg-green-100 text-green-800 rounded-full">
+                          <CheckCircle className="h-4 w-4 mr-1" />
+                          Accepted
+                        </div>
                         <div className="mt-4 flex justify-end space-x-2">
-                          {ride.status !== "cancelled" && (
-                            <Button
-                              onClick={() => handleCancelRide(ride.id)}
-                              className="bg-red-500 text-white hover:bg-red-600"
-                            >
-                              <XCircle className="mr-2" />
-                              Cancel
-                            </Button>
-                          )}
+                          <Button
+                            onClick={() => handleCancelRide(ride.id)}
+                            className="bg-red-500 text-white hover:bg-red-600"
+                          >
+                            <XCircle className="mr-2" />
+                            Cancel
+                          </Button>
                         </div>
                       </div>
                     </CardContent>
@@ -342,15 +354,13 @@ export function Dashboard() {
                       {ride.status.charAt(0).toUpperCase() +
                         ride.status.slice(1)}
                     </span>
-                    {ride.status !== "cancelled" && (
-                      <Button
-                        onClick={() => handleCancelRide(ride.id)}
-                        className="bg-red-500 text-white hover:bg-red-600"
-                      >
-                        <XCircle className="mr-2" />
-                        Cancel
-                      </Button>
-                    )}
+                    <Button
+                      onClick={() => handleCancelRide(ride.id)}
+                      className="bg-red-500 text-white hover:bg-red-600"
+                    >
+                      <XCircle className="mr-2" />
+                      Cancel
+                    </Button>
                   </div>
                 </div>
               ))}

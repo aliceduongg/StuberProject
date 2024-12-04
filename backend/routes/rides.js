@@ -144,14 +144,28 @@ router.put('/:id/cancel', auth, async (req, res) => {
       return res.status(404).json({ msg: 'Ride not found' });
     }
 
-    // Simply update the status to cancelled
+    // Check if the user is either the rider or the driver of the ride
+    const isRider = ride.rider.toString() === req.user.id.toString();
+    const isDriver = ride.driver && ride.driver.toString() === req.user.id.toString();
+
+    if (!isRider && !isDriver) {
+      return res.status(401).json({ msg: 'Not authorized to cancel this ride' });
+    }
+
+    // Only allow cancellation if ride status is 'pending' or 'accepted'
+    if (!['pending', 'accepted'].includes(ride.status)) {
+      return res.status(400).json({ msg: 'Ride cannot be cancelled in its current state' });
+    }
+
     ride.status = 'cancelled';
     const updatedRide = await ride.save();
 
-    res.json({
+    const rideWithId = {
       ...updatedRide.toObject(),
       id: updatedRide._id
-    });
+    };
+
+    res.json(rideWithId);
   } catch (err) {
     console.error(err.message);
     res.status(500).json({ msg: 'Server error' });
