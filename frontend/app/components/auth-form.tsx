@@ -100,7 +100,7 @@ export function AuthForm({ type }: AuthFormProps) {
       localStorage.setItem(
         "user",
         JSON.stringify({
-          _id: data.user._id, 
+          _id: data.user._id,
           email: data.user.email,
           role: data.user.role,
           firstName: data.user.firstName,
@@ -145,7 +145,7 @@ export function AuthForm({ type }: AuthFormProps) {
                   <Label htmlFor="firstName">First Name</Label>
                   <Input
                     id="firstName"
-                    className="rounded-md border-pastel-blue" 
+                    className="rounded-md border-pastel-blue"
                     value={firstName}
                     onChange={(e) => setFirstName(e.target.value)}
                     required
@@ -186,12 +186,12 @@ export function AuthForm({ type }: AuthFormProps) {
                 required
               />
             </div>
-            <div className="flex flex-col space-y-1.5" >
+            <div className="flex flex-col space-y-1.5">
               <Label htmlFor="password">Password</Label>
               <Input
                 id="password"
                 type="password"
-                 className="rounded-md border-pastel-blue"
+                className="rounded-md border-pastel-blue"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
@@ -212,23 +212,31 @@ export function AuthForm({ type }: AuthFormProps) {
                 </select>
               </div>
             )}
-          </div>
-          {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
-          <div className="flex justify-between mt-4 ">
-            <Button
-
-              variant="default"
-              onClick={() => router.push(type === "login" ? "/signup" : "/login")}
-              className="" // Added rounded corners
-              style={{ color: 'purple', fontSize:'10px', backgroundColor: '#d8e6fd' }}
-              
-            
-              {type === "login" ? "Dont have an account? Click Here" : "Already Have an Account? Click Here"}
-            </Button>
-            <Button type="submit" className=" hover:bg-blue-800 hover:border-blue-900 hover:text-blue-100 hover:scale-105 transition-transform duration-300 flex items-center bg-white text-white hover:bg-gray-800 rounded-full overflow-hidden bg-gradient-to-br from-blue-400 via-blue-600 to-purple-600"
-            style={{ color: 'white' }}>
-              {type === "login" ? "Login" : "Sign Up"}
-            </Button>
+            <div className="flex justify-between mt-4">
+              <Button
+                variant="default"
+                onClick={() =>
+                  router.push(type === "login" ? "/signup" : "/login")
+                }
+                className=""
+                style={{
+                  color: "purple",
+                  fontSize: "10px",
+                  backgroundColor: "#d8e6fd",
+                }}
+              >
+                {type === "login"
+                  ? "Don't have an account? Click Here"
+                  : "Already Have an Account? Click Here"}
+              </Button>
+              <Button
+                type="submit"
+                className="hover:bg-blue-800 hover:border-blue-900 hover:text-blue-100 hover:scale-105 transition-transform duration-300 flex items-center bg-white text-white hover:bg-gray-800 rounded-full overflow-hidden bg-gradient-to-br from-blue-400 via-blue-600 to-purple-600"
+                style={{ color: "white" }}
+              >
+                {type === "login" ? "Login" : "Sign Up"}
+              </Button>
+            </div>
           </div>
         </form>
       </CardContent>
