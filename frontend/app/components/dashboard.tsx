@@ -135,6 +135,10 @@ export function Dashboard() {
   const handleCancelRide = async (rideId: string) => {
     try {
       const token = localStorage.getItem("token");
+      const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
+      console.log("Current user:", currentUser);
+      console.log("Ride ID:", rideId); 
+
       if (!token) {
         throw new Error("No authentication token found");
       }
@@ -152,6 +156,7 @@ export function Dashboard() {
 
       if (!response.ok) {
         const errorData = await response.json();
+        console.log("Error response:", errorData); // Add this
         throw new Error(errorData.msg || "Failed to cancel ride");
       }
 
