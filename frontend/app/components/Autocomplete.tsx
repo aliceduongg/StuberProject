@@ -56,7 +56,7 @@ const Autocomplete: React.FC<AutocompleteProps> = ({ onSelect }) => {
   };
 
   return (
-    <div className="relative w-full max-w-md mx-auto">
+    <div className="relative max-w-md ">
       <input
         type="text"
         className="w-full border border-pastel-blue rounded-full p-2 mb-2 z-10 relative bg-white text-black"

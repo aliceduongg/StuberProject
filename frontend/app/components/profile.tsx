@@ -106,7 +106,7 @@ export function Profile() {
         </form>
       </CardContent>
       <CardFooter>
-        <Button onClick={handleUpdateProfile} className="overflow-hidden bg-gradient-to-br from-blue-400 via-blue-600 to-purple-600"
+        <Button onClick={handleUpdateProfile} className=" w-full overflow-hidden rounded-full bg-gradient-to-br from-blue-400 via-blue-600 to-purple-600"
         style={{ color: 'white' }}>
           Update Profile
         </Button>

@@ -86,16 +86,18 @@ export function RideBooking({ onBookingComplete }: RideBookingProps) {
 
   return (
     <div className="space-y-4 p-4 border rounded-lg bg-white text-black">
-      <h2 className="text-xl font-bold">Book a Ride</h2>
+      <h2 className="text-xl font-bold relative max-w-md mx-auto" style={{ fontSize:'25px' }}>Book a Ride</h2>
 
-      <div className="space-y-2">
+      <div className="space-y-2 text-left">
         <label className="block text-sm font-medium">Pickup Location</label>
         <Autocomplete onSelect={(location) => setPickupLocation(location)} />
       </div>
 
-      <div className="space-y-2">
+      <div className="space-y-2 text-left">
         <label className="block text-sm font-medium">Destination</label>
+        <div className="block">
         <Autocomplete onSelect={(location) => setDestination(location)} />
+          </div>
       </div>
 
       <div className="space-y-2">

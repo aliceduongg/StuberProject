@@ -151,7 +151,7 @@ export function Dashboard() {
           {user.role === "driver" && (
             <div>
               <h3 className="text-lg font-semibold text-black mb-4">
-                Available Rides
+                Available Rides:
               </h3>
               {rides
                 .filter((ride) => ride.status === "pending")
