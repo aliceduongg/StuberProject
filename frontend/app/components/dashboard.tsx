@@ -347,7 +347,7 @@ export function Dashboard() {
           </Button>
         </CardFooter>
       </Card>
-      
+
       {/* Rider View - Show Upcoming Rides */}
       {user.role === "rider" && rides.length > 0 && (
         <Card className="mt-4 bg-white bg-opacity-80 backdrop-blur-md border-pastel-blue">
@@ -359,6 +359,11 @@ export function Dashboard() {
           <CardContent>
             {rides
               .filter((ride) => ride.status !== "rejected")
+              .sort((a, b) => {
+                const dateA = new Date(`${a.date}T${a.time}`);
+                const dateB = new Date(`${b.date}T${b.time}`);
+                return dateA.getTime() - dateB.getTime();
+              })
               .map((ride, index) => (
                 <div
                   key={
