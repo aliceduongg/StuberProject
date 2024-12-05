@@ -1,5 +1,5 @@
-import { Profile } from '../components/profile'
-import Layout from '../components/layout'
+import { Profile } from "../components/profile";
+import Layout from "../components/layout";
 
 export default function ProfilePage() {
   return (
@@ -8,6 +8,5 @@ export default function ProfilePage() {
         <Profile />
       </div>
     </Layout>
-  )
+  );
 }
-
