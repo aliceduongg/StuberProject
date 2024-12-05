@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Car, MapPin, Calendar, Clock, DollarSign } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 type HistoricalRide = {
   id: string;
@@ -18,19 +19,16 @@ type HistoricalRide = {
 export default function RideHistoryPage() {
   const [historicalRides, setHistoricalRides] = useState<HistoricalRide[]>([]);
   const [user, setUser] = useState<any>(null);
+  const router = useRouter();
 
-  useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
-    fetchRideHistory();
-  }, []);
-
-  const fetchRideHistory = async () => {
+  // Memoize fetchRideHistory to prevent infinite loop
+  const fetchRideHistory = useCallback(async () => {
     try {
       const token = localStorage.getItem("token");
-      if (!token) return;
+      if (!token) {
+        router.push("/login");
+        return;
+      }
 
       const response = await fetch("http://localhost:8080/api/rides/history", {
         headers: {
@@ -44,8 +42,25 @@ export default function RideHistoryPage() {
       setHistoricalRides(data);
     } catch (error) {
       console.error("Error fetching ride history:", error);
+      router.push("/login");
     }
-  };
+  }, [router]);
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (!storedUser) {
+      router.push("/login");
+      return;
+    }
+
+    const parsedUser = JSON.parse(storedUser);
+    setUser(parsedUser);
+    fetchRideHistory();
+  }, [router, fetchRideHistory]);
+
+  if (!user) {
+    return null; // or a loading spinner
+  }
 
   return (
     <div className="space-y-4 overflow-hidden bg-gradient-to-br from-blue-400 via-blue-500 to-purple-70 min-h-screen p-4">
