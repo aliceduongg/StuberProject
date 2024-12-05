@@ -331,22 +331,7 @@ export function Dashboard() {
           </Button>
         </CardFooter>
       </Card>
-
-      {/* Rider's Ride History */}
-      {user && (
-        <Card className="mt-4 bg-white bg-opacity-80 backdrop-blur-md border-pastel-blue">
-          <CardHeader>
-            <CardTitle className="text-pastel-blue">Ride History</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Link href="/ride-history">
-              <Button className="bg-blue-500 text-white hover:bg-blue-600 rounded-full">
-                View Ride History
-              </Button>
-            </Link>
-          </CardContent>
-        </Card>
-      )}
+      
       {user.role === "rider" && rides.length > 0 && (
         <Card className="mt-4 bg-white bg-opacity-80 backdrop-blur-md border-pastel-blue">
           <CardHeader>
