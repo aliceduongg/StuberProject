@@ -385,6 +385,8 @@ export function Dashboard() {
                       className={`font-semibold ${
                         ride.status === "accepted"
                           ? "text-green-600"
+                          : ride.status === "cancelled"
+                          ? "text-red-600"
                           : "text-yellow-600"
                       }`}
                     >
