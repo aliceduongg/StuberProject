@@ -20,7 +20,7 @@ router.post('/', auth, async (req, res) => {
       fare,
     });
 
-    const ride = await newRide.save(); // Save the new ride to the database
+    const ride = await newRide.save();
 
     // Find and Send notification to all drivers
     const drivers = await User.find({
@@ -70,6 +70,42 @@ router.get('/', auth, async (req, res) => {
       ...ride.toObject(),
       id: ride._id
     }));
+    res.json(ridesWithId);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ msg: 'Server error' });
+  }
+});
+
+// get rides history
+router.get('/history', auth, async (req, res) => {
+  try {
+    const currentDate = new Date();
+    let rides;
+
+    if (req.user.role === 'rider') {
+      rides = await Ride.find({
+        rider: req.user.id,
+        $or: [
+          { date: { $lt: currentDate } },
+          { status: { $in: ['cancelled', 'completed'] } }
+        ]
+      }).sort({ date: -1 });
+    } else if (req.user.role === 'driver') {
+      rides = await Ride.find({
+        driver: req.user.id,
+        $or: [
+          { date: { $lt: currentDate } },
+          { status: { $in: ['cancelled', 'completed'] } }
+        ]
+      }).sort({ date: -1 });
+    }
+
+    const ridesWithId = rides.map(ride => ({
+      ...ride.toObject(),
+      id: ride._id
+    }));
+
     res.json(ridesWithId);
   } catch (err) {
     console.error(err.message);

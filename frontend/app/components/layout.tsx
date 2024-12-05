@@ -1,7 +1,6 @@
 import Link from 'next/link'
 import { Button } from "@/components/ui/button"
-import { Car, ArrowLeft } from 'lucide-react'
-
+import { ArrowLeft } from 'lucide-react'
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -22,6 +21,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
             <Link href="/profile" className="text-lg font-medium px-4 py-2 text-white hover:text-blue-200 hover:scale-105 transition-transform duration-300 flex items-center">
                 Profile
+            </Link>
+
+
+            <Link href="/RideHistory" className="text-lg font-medium px-4 py-2 text-white hover:text-blue-200 hover:scale-105 transition-transform duration-300 flex items-center">
+                 Ride History
             </Link>
           </nav>
         </div>

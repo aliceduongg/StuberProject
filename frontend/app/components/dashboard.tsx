@@ -3,6 +3,8 @@
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
+
 import {
   Card,
   CardContent,
@@ -65,8 +67,7 @@ export function Dashboard() {
 
       const data = await response.json();
       setRides(data);
-    } catch (error) {
-    }
+    } catch (error) {}
   }, []);
 
   useEffect(() => {
@@ -179,10 +180,12 @@ export function Dashboard() {
       <Card className=" border-pastel-blue overflow-hidden bg-gradient-to-br from-purple-300 via-blue-500 to-purple-700">
         <CardHeader>
           <CardTitle className="overflow-hidden text-black text-2xl text-[32px] font-bold">
-            Welcome, {" "}<span className="text-blue-600 ">{user.firstName}</span> 
-
+            Welcome, <span className="text-blue-600 ">{user.firstName}</span>
           </CardTitle>
-          <CardDescription className="" style={{ color:'black', fontSize:'17px'}}>
+          <CardDescription
+            className=""
+            style={{ color: "black", fontSize: "17px" }}
+          >
             You are logged in as a{" "}
             <span className="text-blue-600">{user.role}</span>
           </CardDescription>
@@ -198,7 +201,6 @@ export function Dashboard() {
           {user.role === "driver" && (
             <div>
               <h3 className="text-lg font-semibold text-black mb-4">
-
                 Available Rides
               </h3>
               {rides
@@ -239,7 +241,7 @@ export function Dashboard() {
                         <Button
                           onClick={() => handleRideAction(ride.id, "accept")}
                           className="text-white rounded-full overflow-hidden bg-gradient-to-br from-green-400 via-green-600 to-green-400 shadow-lg hover:bg-blue-800 hover:border-blue-900 hover:text-blue-100 hover:scale-105 transition-transform duration-300 flex items-center"
-                          style={{ color: 'white' }}
+                          style={{ color: "white" }}
                         >
                           <CheckCircle className="mr-2" />
                           Accept
@@ -247,7 +249,7 @@ export function Dashboard() {
                         <Button
                           onClick={() => handleRideAction(ride.id, "reject")}
                           className="bg-red-500 text-white hover:bg-red-600 rounded-full overflow-hidden bg-gradient-to-br from-red-400 via-red-700 to-red-400 shadow-lg hover:bg-blue-800 hover:border-blue-900 hover:text-blue-100 hover:scale-105 transition-transform duration-300 flex items-center"
-                          style={{ color: 'white' }}
+                          style={{ color: "white" }}
                         >
                           <XCircle className="mr-2" />
                           Reject
@@ -331,6 +333,20 @@ export function Dashboard() {
       </Card>
 
       {/* Rider's Ride History */}
+      {user && (
+        <Card className="mt-4 bg-white bg-opacity-80 backdrop-blur-md border-pastel-blue">
+          <CardHeader>
+            <CardTitle className="text-pastel-blue">Ride History</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Link href="/ride-history">
+              <Button className="bg-blue-500 text-white hover:bg-blue-600 rounded-full">
+                View Ride History
+              </Button>
+            </Link>
+          </CardContent>
+        </Card>
+      )}
       {user.role === "rider" && rides.length > 0 && (
         <Card className="mt-4 bg-white bg-opacity-80 backdrop-blur-md border-pastel-blue">
           <CardHeader>

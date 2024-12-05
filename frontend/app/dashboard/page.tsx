@@ -1,11 +1,14 @@
-import { Dashboard } from '../components/dashboard'
-import Layout from '../components/layout'
+"use client";
 
-export default function DashboardPage() {
-  return (
-    <Layout>
-      <Dashboard />
-    </Layout>
-  )
+import { Dashboard } from '../components/dashboard';
+import {withAuth} from '../components/protected-route';
+
+
+function DashboardPage() {
+  return <Dashboard />;
 }
+
+export default withAuth(DashboardPage);
+
+
 
