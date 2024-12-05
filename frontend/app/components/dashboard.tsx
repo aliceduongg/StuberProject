@@ -3,7 +3,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
 
 import {
   Card,
@@ -56,7 +55,6 @@ export function Dashboard() {
 
       const response = await fetch("http://localhost:8080/api/rides", {
         headers: {
-          // Authorization: `Bearer ${token}`,
           "x-auth-token": token,
         },
       });
@@ -335,7 +333,7 @@ export function Dashboard() {
       {user.role === "rider" && rides.length > 0 && (
         <Card className="mt-4 bg-white bg-opacity-80 backdrop-blur-md border-pastel-blue">
           <CardHeader>
-            <CardTitle className="text-pastel-blue">Your Rides</CardTitle>
+            <CardTitle className="text-pastel-blue">Your Upcoming Rides</CardTitle>
           </CardHeader>
           <CardContent>
             {rides

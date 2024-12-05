@@ -63,50 +63,80 @@ export default function RideHistoryPage() {
   }
 
   return (
-    <div className="space-y-4 overflow-hidden bg-gradient-to-br from-blue-400 via-blue-500 to-purple-70 min-h-screen p-4">
-      <Card className="border-pastel-blue">
-        <CardHeader>
-          <CardTitle className="text-2xl font-bold text-pastel-blue">
+    <div className="space-y-4 overflow-hidden bg-gradient-to-br from-blue-400 via-blue-500 to-purple-700 min-h-screen p-6">
+      <Card className="border-2 border-blue-300 shadow-xl">
+        <CardHeader className="bg-gradient-to-r from-blue-600 to-blue-800">
+          <CardTitle className="text-3xl font-bold text-white flex items-center">
+            <Clock className="mr-3 h-8 w-8" />
             Ride History
           </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-6">
           {historicalRides.length > 0 ? (
-            <div className="space-y-4">
+            <div className="space-y-6">
               {historicalRides.map((ride) => (
                 <Card
                   key={ride.id}
-                  className="bg-white bg-opacity-80 backdrop-blur-md"
+                  className="transform transition-all duration-300 hover:scale-[1.02] border-l-4 hover:shadow-xl"
+                  style={{
+                    borderLeftColor: 
+                      ride.status.toLowerCase() === 'completed' ? '#10B981' :
+                      ride.status.toLowerCase() === 'cancelled' ? '#EF4444' :
+                      ride.status.toLowerCase() === 'pending' ? '#F59E0B' : '#6B7280'
+                  }}
                 >
-                  <CardContent className="p-4">
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between">
+                  <CardContent className="p-5">
+                    <div className="space-y-3">
+                      {/* Status and Fare Row */}
+                      <div className="flex items-center justify-between mb-4">
                         <div className="flex items-center">
-                          <Car className="text-pastel-blue mr-2" />
-                          <span className="font-semibold">
-                            Status: {ride.status.toUpperCase()}
+                          <Car className="text-blue-600 mr-2 h-5 w-5" />
+                          <span className={`px-3 py-1 rounded-full text-sm font-semibold ${
+                            ride.status.toLowerCase() === 'completed' ? 'bg-green-100 text-green-800' :
+                            ride.status.toLowerCase() === 'cancelled' ? 'bg-red-100 text-red-800' :
+                            'bg-gray-100 text-gray-800'
+                          }`}>
+                            {ride.status.toUpperCase()}
                           </span>
                         </div>
-                        <div className="flex items-center text-green-600">
-                          <DollarSign className="mr-1" />
-                          <span className="font-bold">{ride.fare}</span>
+                        <div className="flex items-center bg-green-50 px-4 py-2 rounded-full">
+                          <DollarSign className="text-green-600 mr-1 h-5 w-5" />
+                          <span className="font-bold text-green-700">${ride.fare}</span>
                         </div>
                       </div>
-                      <div className="flex items-center">
-                        <MapPin className="text-pastel-blue mr-2" />
-                        <span>From: {ride.pickupLocation}</span>
+  
+                      {/* Location Details */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-gray-50 p-4 rounded-lg">
+                        <div className="flex items-center">
+                          <div className="bg-blue-100 p-2 rounded-full">
+                            <MapPin className="text-blue-600 h-5 w-5" />
+                          </div>
+                          <div className="ml-3">
+                            <p className="text-sm text-gray-500">From</p>
+                            <p className="font-medium text-gray-900">{ride.pickupLocation}</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center">
+                          <div className="bg-purple-100 p-2 rounded-full">
+                            <MapPin className="text-purple-600 h-5 w-5" />
+                          </div>
+                          <div className="ml-3">
+                            <p className="text-sm text-gray-500">To</p>
+                            <p className="font-medium text-gray-900">{ride.destination}</p>
+                          </div>
+                        </div>
                       </div>
-                      <div className="flex items-center">
-                        <MapPin className="text-pastel-blue mr-2" />
-                        <span>To: {ride.destination}</span>
-                      </div>
-                      <div className="flex items-center">
-                        <Calendar className="text-pastel-blue mr-2" />
-                        <span>{ride.date}</span>
-                      </div>
-                      <div className="flex items-center">
-                        <Clock className="text-pastel-blue mr-2" />
-                        <span>{ride.time}</span>
+  
+                      {/* Date and Time */}
+                      <div className="flex items-center justify-between pt-2 text-gray-600">
+                        <div className="flex items-center">
+                          <Calendar className="text-blue-600 mr-2 h-4 w-4" />
+                          <span className="text-sm">{ride.date}</span>
+                        </div>
+                        <div className="flex items-center">
+                          <Clock className="text-blue-600 mr-2 h-4 w-4" />
+                          <span className="text-sm">{ride.time}</span>
+                        </div>
                       </div>
                     </div>
                   </CardContent>
@@ -114,8 +144,10 @@ export default function RideHistoryPage() {
               ))}
             </div>
           ) : (
-            <div className="text-center text-gray-500 py-8">
-              No ride history available
+            <div className="text-center text-gray-500 py-12 bg-gray-50 rounded-lg">
+              <Car className="mx-auto h-12 w-12 text-gray-400 mb-3" />
+              <p className="text-lg font-medium">No ride history available</p>
+              <p className="text-sm text-gray-400">Your completed rides will appear here</p>
             </div>
           )}
         </CardContent>
