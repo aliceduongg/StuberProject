@@ -258,7 +258,7 @@ export function Dashboard() {
                 ))}
 
               {/* Accepted Rides Section */}
-              <h3 className="text-lg font-semibold text-pastel-blue mb-4 mt-8">
+              <h3 className="text-lg font-semibold text-black mb-4 mt-8">
                 Your Accepted Rides
               </h3>
               {rides
@@ -329,15 +329,17 @@ export function Dashboard() {
           </Button>
         </CardFooter>
       </Card>
-      
+
       {user.role === "rider" && rides.length > 0 && (
         <Card className="mt-4 bg-white bg-opacity-80 backdrop-blur-md border-pastel-blue">
           <CardHeader>
-            <CardTitle className="text-pastel-blue">Your Upcoming Rides</CardTitle>
+            <CardTitle className="text-pastel-blue">
+              Your Upcoming Rides
+            </CardTitle>
           </CardHeader>
           <CardContent>
             {rides
-              .filter((ride) => ride.status !== "rejected")
+              .filter((ride) => ride.status !== "rejected" && ride.status !== "cancelled")
               .map((ride, index) => (
                 <div
                   key={
@@ -361,7 +363,9 @@ export function Dashboard() {
                   <div className="flex items-center space-x-4">
                     <span
                       className={`font-semibold ${
-                        ride.status === "accepted"
+                        ride.status === "cancelled"
+                          ? "text-red-600"
+                          : ride.status === "accepted"
                           ? "text-green-600"
                           : "text-yellow-600"
                       }`}
