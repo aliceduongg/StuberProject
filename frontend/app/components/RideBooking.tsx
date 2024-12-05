@@ -22,6 +22,7 @@ export function RideBooking({ onBookingComplete }: RideBookingProps) {
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
   const [fare, setFare] = useState<number>(0);
+  const [suggestedFare, setSuggestedFare] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const handleCalculateFare = () => {
@@ -32,7 +33,7 @@ export function RideBooking({ onBookingComplete }: RideBookingProps) {
 
     const distance = calculateDistance(pickupLocation, destination);
     const calculatedFare = calculateFare(distance, time);
-    setFare(calculatedFare);
+    setSuggestedFare(calculatedFare);
     setError(null);
   };
 
@@ -82,6 +83,7 @@ export function RideBooking({ onBookingComplete }: RideBookingProps) {
       setDate("");
       setTime("");
       setFare(0);
+      setSuggestedFare(null);
       setError(null);
 
     } catch (error: any) {
@@ -141,7 +143,16 @@ export function RideBooking({ onBookingComplete }: RideBookingProps) {
         <Button onClick={handleCalculateFare} className="w-full mb-2">
           Calculate Fare
         </Button>
-        <Input type="number" value={fare} readOnly />
+        <Input 
+          type="number" 
+          value={fare} 
+          onChange={(e) => setFare(Number(e.target.value))} 
+        />
+        {suggestedFare !== null && (
+          <p className="text-sm text-gray-600 mt-1">
+            Suggested fare: ${suggestedFare.toFixed(2)}
+          </p>
+        )}
       </div>
 
       {error && <p className="text-red-500 text-sm">{error}</p>}
