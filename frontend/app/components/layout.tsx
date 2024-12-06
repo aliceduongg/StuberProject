@@ -4,7 +4,7 @@ import { ArrowLeft, Car } from "lucide-react";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen bg-blue-100 text-blue-900">
+    <div className="min-h-screen bg-blue-100 text-blue-800">
       <header className="bg-gradient-to-r from-blue-600 to-blue-800 text-white shadow-lg">
         <div className="container mx-auto flex items-center justify-between py-4 px-6">
           <Link

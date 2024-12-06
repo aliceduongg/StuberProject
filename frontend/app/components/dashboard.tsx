@@ -202,8 +202,7 @@ export function Dashboard() {
             className=""
             style={{ color: "black", fontSize: "17px" }}
           >
-            Your role: {" "}
-            <span className="text-blue-600">{user.role}</span>
+            Your role: <span className="text-blue-600">{user.role}</span>
           </CardDescription>
         </CardHeader>
 
@@ -224,10 +223,16 @@ export function Dashboard() {
                 .map((ride) => (
                   <Card
                     key={`ride-card-${ride.id}`}
-                    className="mt-4 bg-white bg-opacity-80 backdrop-blur-md border-pastel-blue"
+                    className="mt-4 bg-white bg-opacity-80 backdrop-blur-md border-pastel-blue form-card"
                   >
                     <CardContent className="p-4">
                       <div className="space-y-2">
+                        <div className="flex items-center">
+                          <MapPin className="text-pastel-blue mr-2" />
+                          <span className="font-semibold">
+                            From: {ride.pickupLocation}
+                          </span>
+                        </div>
                         <div className="flex items-center justify-between">
                           <div className="flex items-center">
                             <MapPin className="text-pastel-blue mr-2" />
@@ -246,11 +251,11 @@ export function Dashboard() {
                         </div>
                         <div className="flex items-center">
                           <Calendar className="text-pastel-blue mr-2" />
-                          <span>Date: {ride.date}</span>
+                          <span>Date: {formatDate(ride.date)}</span>
                         </div>
                         <div className="flex items-center">
                           <Clock className="text-pastel-blue mr-2" />
-                          <span>Time: {ride.time}</span>
+                          <span>Time: {formatTime(ride.time)}</span>
                         </div>
                       </div>
                       <div className="mt-4 flex justify-end space-x-2 text-white">
@@ -348,7 +353,6 @@ export function Dashboard() {
         </CardFooter>
       </Card>
 
-
       {/* Rider View - Show Upcoming Rides */}
       {user.role === "rider" && rides.length > 0 && (
         <Card className="mt-4 bg-white bg-opacity-80 backdrop-blur-md border-pastel-blue">
@@ -359,7 +363,10 @@ export function Dashboard() {
           </CardHeader>
           <CardContent>
             {rides
-              .filter((ride) => ride.status !== "rejected" && ride.status !== "cancelled")
+              .filter(
+                (ride) =>
+                  ride.status !== "rejected" && ride.status !== "cancelled"
+              )
               .sort((a, b) => {
                 const dateA = new Date(`${a.date}T${a.time}`);
                 const dateB = new Date(`${b.date}T${b.time}`);

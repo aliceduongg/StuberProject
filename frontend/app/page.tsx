@@ -3,7 +3,16 @@ import React from "react";
 import Layout from "./components/layout";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { Car, LogIn, UserPlus, Users, Settings, Heart, Calendar, Cloud } from "lucide-react";
+import {
+  Car,
+  LogIn,
+  UserPlus,
+  Users,
+  Settings,
+  Heart,
+  Calendar,
+  Cloud,
+} from "lucide-react";
 import Image from "next/image";
 import Graphics_Campus from "./images/Graphics_Campus.png";
 
@@ -68,6 +77,11 @@ export default function Home() {
                   Join our growing community of student drivers and riders
                 </span>
               </div>
+              <Link href="/team" className="block mt-6">
+                <span className="text-blue-600 hover:text-blue-800 underline cursor-pointer transition-colors duration-300">
+                  Meet the Team
+                </span>
+              </Link>
             </div>
           </div>
         </div>
