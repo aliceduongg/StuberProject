@@ -348,6 +348,7 @@ export function Dashboard() {
         </CardFooter>
       </Card>
 
+
       {/* Rider View - Show Upcoming Rides */}
       {user.role === "rider" && rides.length > 0 && (
         <Card className="mt-4 bg-white bg-opacity-80 backdrop-blur-md border-pastel-blue">
@@ -358,7 +359,7 @@ export function Dashboard() {
           </CardHeader>
           <CardContent>
             {rides
-              .filter((ride) => ride.status !== "rejected")
+              .filter((ride) => ride.status !== "rejected" && ride.status !== "cancelled")
               .sort((a, b) => {
                 const dateA = new Date(`${a.date}T${a.time}`);
                 const dateB = new Date(`${b.date}T${b.time}`);
@@ -388,7 +389,9 @@ export function Dashboard() {
                   <div className="flex items-center space-x-4">
                     <span
                       className={`font-semibold ${
-                        ride.status === "accepted"
+                        ride.status === "cancelled"
+                          ? "text-red-600"
+                          : ride.status === "accepted"
                           ? "text-green-600"
                           : ride.status === "cancelled"
                           ? "text-red-600"
