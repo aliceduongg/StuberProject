@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Car } from "lucide-react";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -11,7 +11,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             href="/"
             className="text-2xl font-extrabold flex items-center hover:text-blue-200 transition duration-300"
           >
-            <ArrowLeft className="mr-2 h-8 w-8" />
+            <Car className="mr-2 h-8 w-8" />
+            Stuber
           </Link>
 
           <nav className="flex items-center space-x-4 ml-auto">

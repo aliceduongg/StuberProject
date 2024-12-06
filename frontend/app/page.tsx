@@ -15,7 +15,6 @@ export default function Home() {
         <div className="relative flex flex-col items-center justify-center min-h-screen text-center overflow-hidden bg-gradient-to-br from-blue-400 via-blue-500 to-purple-700">
           <div className="relative z-10 text-white px-4">
             <h1 className="text-5xl font-extrabold mb-6 flex items-center justify-center">
-              <Car className="mr-3 h-10 w-10" />
               Welcome to Stuber - Campus RideShare
             </h1>
             <p className="text-xl mb-8 font-light">
