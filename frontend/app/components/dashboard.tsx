@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { format } from "date-fns";
 
 import {
   Card,
@@ -81,16 +82,33 @@ export function Dashboard() {
     fetchRides();
   }, [router, fetchRides]);
 
+  // Format date in MM/dd/yyyy format
+  const formatDate = (dateStr: string) => {
+    const date = new Date(dateStr);
+    return format(date, "MM/dd/yyyy");
+  };
+  // Format time in 12-hour format
+  const formatTime = (timeStr: string) => {
+    const [hours, minutes] = timeStr.split(":");
+    const date = new Date();
+    date.setHours(parseInt(hours), parseInt(minutes));
+    return format(date, "h:mm a");
+  };
+
+  // Logout user
   const handleLogout = () => {
     localStorage.removeItem("user");
     localStorage.removeItem("token");
     router.push("/login");
   };
 
+  // Handle booking completion
   const handleBookingComplete = (newRide: Ride) => {
     fetchRides();
     setRides((prevRides) => [...prevRides, newRide]);
   };
+
+  // Handle ride action
   const handleRideAction = async (
     rideId: string,
     action: "accept" | "reject"
@@ -258,7 +276,7 @@ export function Dashboard() {
                 ))}
 
               {/* Accepted Rides Section */}
-              <h3 className="text-lg font-semibold text-black mb-4 mt-8">
+              <h3 className="text-lg font-semibold text-pastel-yellow mb-4 mt-8">
                 Your Accepted Rides
               </h3>
               {rides
@@ -288,11 +306,11 @@ export function Dashboard() {
                         </div>
                         <div className="flex items-center">
                           <Calendar className="text-green-600 mr-2" />
-                          <span>Date: {ride.date}</span>
+                          <span>Date: {formatDate(ride.date)}</span>
                         </div>
                         <div className="flex items-center">
                           <Clock className="text-green-600 mr-2" />
-                          <span>Time: {ride.time}</span>
+                          <span>Time: {formatTime(ride.time)}</span>
                         </div>
                         <div className="flex items-center">
                           <MapPin className="text-green-600 mr-2" />
@@ -330,6 +348,8 @@ export function Dashboard() {
         </CardFooter>
       </Card>
 
+
+      {/* Rider View - Show Upcoming Rides */}
       {user.role === "rider" && rides.length > 0 && (
         <Card className="mt-4 bg-white bg-opacity-80 backdrop-blur-md border-pastel-blue">
           <CardHeader>
@@ -340,6 +360,11 @@ export function Dashboard() {
           <CardContent>
             {rides
               .filter((ride) => ride.status !== "rejected" && ride.status !== "cancelled")
+              .sort((a, b) => {
+                const dateA = new Date(`${a.date}T${a.time}`);
+                const dateB = new Date(`${b.date}T${b.time}`);
+                return dateA.getTime() - dateB.getTime();
+              })
               .map((ride, index) => (
                 <div
                   key={
@@ -353,9 +378,10 @@ export function Dashboard() {
                     <Car className="text-pastel-blue mr-2" />
                     <span>
                       From: {ride.pickupLocation} - To: {ride.destination} -
-                      Date: {ride.date} - Time: {ride.time} -
+                      Date: {formatDate(ride.date)} - Time:{" "}
+                      {formatTime(ride.time)} -
                       <span className="ml-2">
-                        <DollarSign className="inline h-4 w-4 text-pastel-blue" />
+                        <DollarSign className="inline h-4 w-4 text-green-600" />
                         {ride.fare}
                       </span>
                     </span>
@@ -367,6 +393,8 @@ export function Dashboard() {
                           ? "text-red-600"
                           : ride.status === "accepted"
                           ? "text-green-600"
+                          : ride.status === "cancelled"
+                          ? "text-red-600"
                           : "text-yellow-600"
                       }`}
                     >

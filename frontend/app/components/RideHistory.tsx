@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Car, MapPin, Calendar, Clock, DollarSign } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { format } from "date-fns";
 
 type HistoricalRide = {
   id: string;
@@ -20,6 +21,19 @@ export default function RideHistoryPage() {
   const [historicalRides, setHistoricalRides] = useState<HistoricalRide[]>([]);
   const [user, setUser] = useState<any>(null);
   const router = useRouter();
+
+  // format date and time
+  const formatDate = (dateStr: string) => {
+    const date = new Date(dateStr);
+    return format(date, "MM/dd/yyyy");
+  };
+
+  const formatTime = (timeStr: string) => {
+    const [hours, minutes] = timeStr.split(":");
+    const date = new Date();
+    date.setHours(parseInt(hours), parseInt(minutes));
+    return format(date, "h:mm a");
+  };
 
   // Memoize fetchRideHistory to prevent infinite loop
   const fetchRideHistory = useCallback(async () => {
@@ -79,10 +93,14 @@ export default function RideHistoryPage() {
                   key={ride.id}
                   className="transform transition-all duration-300 hover:scale-[1.02] border-l-4 hover:shadow-xl"
                   style={{
-                    borderLeftColor: 
-                      ride.status.toLowerCase() === 'completed' ? '#10B981' :
-                      ride.status.toLowerCase() === 'cancelled' ? '#EF4444' :
-                      ride.status.toLowerCase() === 'pending' ? '#F59E0B' : '#6B7280'
+                    borderLeftColor:
+                      ride.status.toLowerCase() === "completed"
+                        ? "#10B981"
+                        : ride.status.toLowerCase() === "cancelled"
+                        ? "#EF4444"
+                        : ride.status.toLowerCase() === "pending"
+                        ? "#F59E0B"
+                        : "#6B7280",
                   }}
                 >
                   <CardContent className="p-5">
@@ -91,20 +109,26 @@ export default function RideHistoryPage() {
                       <div className="flex items-center justify-between mb-4">
                         <div className="flex items-center">
                           <Car className="text-blue-600 mr-2 h-5 w-5" />
-                          <span className={`px-3 py-1 rounded-full text-sm font-semibold ${
-                            ride.status.toLowerCase() === 'completed' ? 'bg-green-100 text-green-800' :
-                            ride.status.toLowerCase() === 'cancelled' ? 'bg-red-100 text-red-800' :
-                            'bg-gray-100 text-gray-800'
-                          }`}>
+                          <span
+                            className={`px-3 py-1 rounded-full text-sm font-semibold ${
+                              ride.status.toLowerCase() === "completed"
+                                ? "bg-green-100 text-green-800"
+                                : ride.status.toLowerCase() === "cancelled"
+                                ? "bg-red-100 text-red-800"
+                                : "bg-gray-100 text-gray-800"
+                            }`}
+                          >
                             {ride.status.toUpperCase()}
                           </span>
                         </div>
                         <div className="flex items-center bg-green-50 px-4 py-2 rounded-full">
                           <DollarSign className="text-green-600 mr-1 h-5 w-5" />
-                          <span className="font-bold text-green-700">${ride.fare}</span>
+                          <span className="font-bold text-green-700">
+                            ${ride.fare}
+                          </span>
                         </div>
                       </div>
-  
+
                       {/* Location Details */}
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-gray-50 p-4 rounded-lg">
                         <div className="flex items-center">
@@ -113,7 +137,9 @@ export default function RideHistoryPage() {
                           </div>
                           <div className="ml-3">
                             <p className="text-sm text-gray-500">From</p>
-                            <p className="font-medium text-gray-900">{ride.pickupLocation}</p>
+                            <p className="font-medium text-gray-900">
+                              {ride.pickupLocation}
+                            </p>
                           </div>
                         </div>
                         <div className="flex items-center">
@@ -122,20 +148,22 @@ export default function RideHistoryPage() {
                           </div>
                           <div className="ml-3">
                             <p className="text-sm text-gray-500">To</p>
-                            <p className="font-medium text-gray-900">{ride.destination}</p>
+                            <p className="font-medium text-gray-900">
+                              {ride.destination}
+                            </p>
                           </div>
                         </div>
                       </div>
-  
+
                       {/* Date and Time */}
                       <div className="flex items-center justify-between pt-2 text-gray-600">
                         <div className="flex items-center">
                           <Calendar className="text-blue-600 mr-2 h-4 w-4" />
-                          <span className="text-sm">{ride.date}</span>
+                          <span className="text-sm">{formatDate(ride.date)}</span>
                         </div>
                         <div className="flex items-center">
                           <Clock className="text-blue-600 mr-2 h-4 w-4" />
-                          <span className="text-sm">{ride.time}</span>
+                          <span className="text-sm">{formatTime(ride.time)}</span>
                         </div>
                       </div>
                     </div>
@@ -147,7 +175,9 @@ export default function RideHistoryPage() {
             <div className="text-center text-gray-500 py-12 bg-gray-50 rounded-lg">
               <Car className="mx-auto h-12 w-12 text-gray-400 mb-3" />
               <p className="text-lg font-medium">No ride history available</p>
-              <p className="text-sm text-gray-400">Your completed rides will appear here</p>
+              <p className="text-sm text-gray-400">
+                Your completed rides will appear here
+              </p>
             </div>
           )}
         </CardContent>

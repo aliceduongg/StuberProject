@@ -16,6 +16,9 @@
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.21.1",
+    "geocoder": "^0.2.3",
+    "haversine": "^1.1.1",
+    "haversine-distance": "^1.2.3",
     "jsonwebtoken": "^9.0.2",
     "lucide-react": "^0.462.0",
     "mongoose": "^8.8.2",
@@ -23,6 +26,7 @@
     "nodemailer": "^6.9.16"
   },
   "devDependencies": {
+    "@types/haversine": "^1.1.8",
     "nodemon": "^3.1.7"
   }
 }
