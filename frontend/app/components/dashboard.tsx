@@ -216,7 +216,7 @@ export function Dashboard() {
           {/* Driver View - Show Available and Accepted Rides */}
           {user.role === "driver" && (
             <div>
-              <h3 className="text-lg font-semibold text-black mb-4">
+              <h3 className="text-lg font-semibold text-green-200 mb-8">
                 Available Rides
               </h3>
               {rides

@@ -1,10 +1,20 @@
 import React, { useState } from "react";
 
-const RADAR_API_KEY = "prj_test_pk_6436e86c8ca5f1cd5f64adc3c6a8dc281209db29"; // Test Publishable key
+const RADAR_API_KEY = "prj_test_pk_6436e86c8ca5f1cd5f64adc3c6a8dc281209db29";
+
+interface Location {
+  latitude: number;
+  longitude: number;
+}
+
+interface LocationWithAddress {
+  address: string;
+  coordinates: Location;
+}
 
 export const fetchSuggestions = async (input: string): Promise<any[]> => {
   if (input.length < 3) {
-    return []; // Clear results for short input
+    return [];
   }
 
   try {
@@ -31,7 +41,7 @@ export const fetchSuggestions = async (input: string): Promise<any[]> => {
 };
 
 interface AutocompleteProps {
-  onSelect?: (destination: string) => void;
+  onSelect: (location: LocationWithAddress) => void;
 }
 
 const Autocomplete: React.FC<AutocompleteProps> = ({ onSelect }) => {
@@ -45,14 +55,19 @@ const Autocomplete: React.FC<AutocompleteProps> = ({ onSelect }) => {
   };
 
   const handleSelect = (item: any) => {
-    const selectedDestination = item.formattedAddress;
-    setQuery(selectedDestination);
+    const location: LocationWithAddress = {
+      address: item.formattedAddress,
+      coordinates: {
+        latitude: item.latitude,
+        longitude: item.longitude
+      }
+    };
+
+    setQuery(item.formattedAddress);
     setResults([]);
 
-    // If an onSelect prop is provided (from parent component), call it
-    if (onSelect) {
-      onSelect(selectedDestination);
-    }
+    // Call onSelect with both address and coordinates
+    onSelect(location);
   };
 
   return (

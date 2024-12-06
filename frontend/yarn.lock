@@ -46,10 +46,17 @@
   resolved "https://registry.npmjs.org/@hookform/resolvers/-/resolvers-3.9.1.tgz"
   integrity sha512-ud2HqmGBM0P0IABqoskKWI6PEf6ZDDBZkFqe2Vnl+mTHCEHzr3ISjjZyCwTjC/qpL25JC9aIDkloQejvMeq0ug==
 
-"@img/sharp-win32-x64@0.33.5":
+"@img/sharp-darwin-arm64@0.33.5":
   version "0.33.5"
-  resolved "https://registry.npmjs.org/@img/sharp-win32-x64/-/sharp-win32-x64-0.33.5.tgz"
-  integrity sha512-MpY/o8/8kj+EcnxwvrP4aTJSWw/aZ7JIGR4aBeZkZw5B7/Jn+tY9/VNwtcoGmdT7GfggGIU4kygOMSbYnOrAbg==
+  resolved "https://registry.npmjs.org/@img/sharp-darwin-arm64/-/sharp-darwin-arm64-0.33.5.tgz"
+  integrity sha512-UT4p+iz/2H4twwAoLCqfA9UH5pI6DggwKEGuaPy7nCVQ8ZsiY5PIcrRvD1DzuY3qYL07NtIQcWnBSY/heikIFQ==
+  optionalDependencies:
+    "@img/sharp-libvips-darwin-arm64" "1.0.4"
+
+"@img/sharp-libvips-darwin-arm64@1.0.4":
+  version "1.0.4"
+  resolved "https://registry.npmjs.org/@img/sharp-libvips-darwin-arm64/-/sharp-libvips-darwin-arm64-1.0.4.tgz"
+  integrity sha512-XblONe153h0O2zuFfTAbQYAX2JhYmDHeWikp1LM9Hul9gVPjFY427k6dFEcOL72O01QxQsWi761svJ/ev9xEDg==
 
 "@isaacs/cliui@^8.0.2":
   version "8.0.2"
@@ -108,10 +115,10 @@
   resolved "https://registry.npmjs.org/@next/env/-/env-15.0.3.tgz"
   integrity sha512-t9Xy32pjNOvVn2AS+Utt6VmyrshbpfUMhIjFO60gI58deSo/KgLOp31XZ4O+kY/Is8WAGYwA5gR7kOb1eORDBA==
 
-"@next/swc-win32-x64-msvc@15.0.3":
+"@next/swc-darwin-arm64@15.0.3":
   version "15.0.3"
-  resolved "https://registry.npmjs.org/@next/swc-win32-x64-msvc/-/swc-win32-x64-msvc-15.0.3.tgz"
-  integrity sha512-VNAz+HN4OGgvZs6MOoVfnn41kBzT+M+tB+OK4cww6DNyWS6wKaDpaAm/qLeOUbnMh0oVx1+mg0uoYARF69dJyA==
+  resolved "https://registry.npmjs.org/@next/swc-darwin-arm64/-/swc-darwin-arm64-15.0.3.tgz"
+  integrity sha512-s3Q/NOorCsLYdCKvQlWU+a+GeAd3C8Rb3L1YnetsgwXzhc3UTWrtQpB/3eCjFOdGUj5QmXfRak12uocd1ZiiQw==
 
 "@nodelib/fs.scandir@2.1.5":
   version "2.1.5"
@@ -1118,6 +1125,11 @@
   resolved "https://registry.npmjs.org/@types/d3-timer/-/d3-timer-3.0.2.tgz"
   integrity sha512-Ps3T8E8dZDam6fUyNiMkekK3XUsaUEik+idO9/YjPtfj2qruF8tFBXS7XhtE4iIXBLxhmLjP3SXpLhVf21I9Lw==
 
+"@types/haversine@^1.1.8":
+  version "1.1.8"
+  resolved "https://registry.npmjs.org/@types/haversine/-/haversine-1.1.8.tgz"
+  integrity sha512-t2loPC7vWBPGUlViZy0K5KeyHBL5FP7UPhdzQMI98ofy+D9/tv+2ciAB1eAhCSseMDMLqQvS4KNk8PSMC+TOHg==
+
 "@types/node@^20":
   version "20.17.7"
   resolved "https://registry.npmjs.org/@types/node/-/node-20.17.7.tgz"
@@ -1633,6 +1645,11 @@ fs-minipass@^3.0.0, fs-minipass@^3.0.3:
   dependencies:
     minipass "^7.0.3"
 
+fsevents@~2.3.2:
+  version "2.3.3"
+  resolved "https://registry.npmjs.org/fsevents/-/fsevents-2.3.3.tgz"
+  integrity sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw==
+
 function-bind@^1.1.2:
   version "1.1.2"
   resolved "https://registry.npmjs.org/function-bind/-/function-bind-1.1.2.tgz"
@@ -1685,6 +1702,11 @@ hasown@^2.0.2:
   integrity sha512-0hJU9SCPvmMzIBdZFqNPXWa6dqh7WdH0cII9y+CyS8rG3nL48Bclra9HmKhVVUHyPWNH5Y7xDwAB7bfgSjkUMQ==
   dependencies:
     function-bind "^1.1.2"
+
+haversine@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.npmjs.org/haversine/-/haversine-1.1.1.tgz"
+  integrity sha512-KW4MS8+krLIeiw8bF5z532CptG0ZyGGFj0UbKMxx25lKnnJ1hMUbuzQl+PXQjNiDLnl1bOyz23U6hSK10r4guw==
 
 hosted-git-info@^8.0.0, hosted-git-info@^8.0.2:
   version "8.0.2"
@@ -2691,6 +2713,11 @@ run-parallel@^1.1.9:
 
 "safer-buffer@>= 2.1.2 < 3.0.0":
   version "2.1.2"
+
+save-dev@^0.0.1-security:
+  version "0.0.1-security"
+  resolved "https://registry.npmjs.org/save-dev/-/save-dev-0.0.1-security.tgz"
+  integrity sha512-k6knZTDNK8PKKbIqnvxiOveJinuw2LcQjqDoaorZWP9M5AR2EPsnpDeSbeoZZ0pHr5ze1uoaKdK8NBGQrJ34Uw==
 
 scheduler@^0.23.2:
   version "0.23.2"
