@@ -4,6 +4,8 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Autocomplete from "./Autocomplete";
+import { calculateDistance, calculateFare } from "../components/fareCalculator";
+
 
 interface RideBookingProps {
   onBookingComplete: (newRide: any) => void;
