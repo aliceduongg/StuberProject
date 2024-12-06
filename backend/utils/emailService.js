@@ -71,4 +71,37 @@ const sendRideAcceptedNotification = async (riderEmail, rideDetails, driverName)
     }
 };
 
-module.exports = { sendRideNotification, sendRideAcceptedNotification };
+// Add the following function to send cancellation notification to rider or driver
+const sendRideCancelledNotification = async (recipientEmail, rideDetails, cancelledBy) => {
+    const mailOptions = {
+        from: process.env.EMAIL_USER,
+        to: recipientEmail,
+        subject: 'Ride Cancellation Notice',
+        html: `
+        <h2> Ride Cancelled </h2>
+        <p>The ride has been cancelled by ${cancelledBy}:</p>
+        <ul>
+            <li>From: ${rideDetails.pickupLocation}</li>
+            <li>To: ${rideDetails.destination}</li>
+            <li>Date: ${rideDetails.date}</li>
+            <li>Time: ${rideDetails.time}</li>
+            <li>Passengers: ${rideDetails.passengers}</li>
+            <li>Fare: $${rideDetails.fare}</li>
+        </ul>
+        <p>We apologize for any inconvenience caused.</p>
+        `
+    };
+
+    try {
+        await transporter.sendMail(mailOptions);
+        console.log(`Cancellation notification email sent to ${recipientEmail}`);
+        return true;
+    } catch (error) {
+        console.error('Error sending cancellation email:', error);
+        throw error;
+    }
+};
+
+module.exports = { sendRideNotification, sendRideAcceptedNotification, sendRideCancelledNotification };
+
+

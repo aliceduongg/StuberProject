@@ -2,7 +2,7 @@ const express = require('express');
 const Ride = require('../models/Ride');
 const auth = require('../middleware/auth');
 const User = require('../models/User');
-const { sendRideNotification, sendRideAcceptedNotification } = require('../utils/emailService');
+const { sendRideNotification, sendRideAcceptedNotification, sendRideCancelledNotification } = require('../utils/emailService');
 
 const router = express.Router();
 
@@ -127,9 +127,69 @@ router.put('/:id/cancel', auth, async (req, res) => {
       return res.status(400).json({ msg: 'Ride cannot be cancelled in its current state' });
     }
 
+    // Update ride status to 'cancelled'
     ride.status = 'cancelled';
     const updatedRide = await ride.save();
 
+    let rider = null;
+    let driver = null;
+    let cancelledBy = null;
+
+    // Fetch rider details
+    rider = await User.findById(ride.rider);
+
+    // Determine who canceled
+    if (req.user.role === 'rider') {
+      cancelledBy = `${rider.firstName} ${rider.lastName} (Rider)`;
+
+      // Get driver details
+      if (ride.driver) {
+        driver = await User.findById(ride.driver);
+      }
+
+      // Send a self-notification
+      if (ride.status === 'pending') {
+        await sendRideCancelledNotification(rider.email, {
+          pickupLocation: ride.pickupLocation,
+          destination: ride.destination,
+          date: ride.date,
+          time: ride.time,
+          passengers: ride.passengers,
+          fare: ride.fare
+        }, cancelledBy);
+      }
+    } else if (req.user.role === 'driver') {
+      driver = await User.findById(req.user.id);
+      cancelledBy = `${driver.firstName} ${driver.lastName} (Driver)`;
+    }
+
+    // Send cancellation notifications to both
+    if (rider) {
+      await sendRideCancelledNotification(rider.email, {
+        pickupLocation: ride.pickupLocation,
+        destination: ride.destination,
+        date: ride.date,
+        time: ride.time,
+        passengers: ride.passengers,
+        fare: ride.fare
+      }, cancelledBy);
+    }
+
+    if (ride.driver) {
+      if (!driver) {
+        driver = await User.findById(ride.driver);
+      }
+      await sendRideCancelledNotification(driver.email, {
+        pickupLocation: ride.pickupLocation,
+        destination: ride.destination,
+        date: ride.date,
+        time: ride.time,
+        passengers: ride.passengers,
+        fare: ride.fare
+      }, cancelledBy);
+    }
+
+    // Transform the ride data and send the response
     const rideWithId = {
       ...updatedRide.toObject(),
       id: updatedRide._id
