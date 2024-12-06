@@ -202,7 +202,7 @@ export function Dashboard() {
             className=""
             style={{ color: "black", fontSize: "17px" }}
           >
-            You are logged in as a{" "}
+            Your role: {" "}
             <span className="text-blue-600">{user.role}</span>
           </CardDescription>
         </CardHeader>

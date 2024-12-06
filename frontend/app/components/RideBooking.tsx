@@ -120,9 +120,7 @@ export function RideBooking({ onBookingComplete }: RideBookingProps) {
   };
 
   return (
-    <div className="space-y-4 p-4 border rounded-lg bg-white text-black">
-      <h2 className="text-xl font-bold">Book a Ride</h2>
-
+    <div className="space-y-2 p-4 border rounded-lg bg-white text-black form-card">
       <div className="space-y-2">
         <label className="block text-sm font-medium">Pickup Location</label>
         <Autocomplete onSelect={(location) => setPickupLocation(location)} />
@@ -132,7 +130,7 @@ export function RideBooking({ onBookingComplete }: RideBookingProps) {
       </div>
 
       <div className="space-y-2">
-        <label className="block text-sm font-medium">Destination</label>
+        <label className="block text-sm font-medium-">Destination</label>
         <Autocomplete onSelect={(location) => setDestination(location)} />
         {destination && (
           <p className="text-sm text-gray-600 mt-1">{destination.address}</p>
@@ -204,7 +202,7 @@ export function RideBooking({ onBookingComplete }: RideBookingProps) {
       <div className="flex justify-center w-full">
         <Button
           onClick={handleBookRide}
-          className="w-auto px-6 rounded-full overflow-hidden bg-gradient-to-br from-blue-400 via-blue-500 to-purple-700 shadow-lg hover:bg-blue-800 hover:border-blue-900 hover:text-blue-100 hover:scale-105 transition-transform duration-300 flex items-center"
+          className="w-auto px-8 rounded-full overflow-hidden bg-gradient-to-br from-blue-300 via-green-500 shadow-lg hover:bg-blue-200 hover:border-green-500 hover:text-blue-100 hover:scale-105 transition-transform duration-300 flex items-center"
           style={{ color: "white" }}
         >
           Book Ride
