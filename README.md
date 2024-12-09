@@ -11,7 +11,7 @@ Stuber aims to create a safe and sustainable transportation option for students.
 ---
 ## Resources  
 
-### 📄 Real-Time Document (Updating)  
+### 📄 Real-Time Document   
 Access the real-time project document for the latest updates and collaborative notes:  
 [View Document](https://docs.google.com/document/d/1EifpK-smMThfvL2LZBzVr9WtOyCFKR2P0xPW9_jJGIg/edit?usp=sharing)  
 
@@ -22,6 +22,10 @@ Stay updated with weekly progress and milestones:
 ### 🛠 Architecture and Design  
 Explore the architecture and design documentation:  
 [View Architecture and Design](https://docs.google.com/document/d/1P2c02CNmza03spt1AojE5A9xKzkQpUw9srG-SpRV_lM/edit?usp=sharing)  
+
+### Sample docs: button story (cancel)  & API testing 
+[View User Story: Cancel button](https://docs.google.com/document/d/1SpnIUke-ajnR9-YC7el_wCaGG3GNZEKvfQdwfxLUBi4/edit?tab=t.0)  
+[View API testing Sample: Cancel button](https://docs.google.com/document/d/179ieDKKJbvGO1Nc-ouB_7BmVNz_Acm4f4jvftLvTGOU/edit?tab=t.0)  
 
 ---
 
