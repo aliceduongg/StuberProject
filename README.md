@@ -27,6 +27,9 @@ Explore the architecture and design documentation:
 [View User Story: Cancel button](https://docs.google.com/document/d/1SpnIUke-ajnR9-YC7el_wCaGG3GNZEKvfQdwfxLUBi4/edit?tab=t.0)  
 [View API testing Sample: Cancel button](https://docs.google.com/document/d/179ieDKKJbvGO1Nc-ouB_7BmVNz_Acm4f4jvftLvTGOU/edit?tab=t.0)  
 
+###  Git Documentation:
+[View Git Doc](https://docs.google.com/document/d/1ssW7eNUabRi7gGih1PfTL4nTzkYwu_wO83n8TlRDjd8/edit?tab=t.0#heading=h.xtgh7pq68vr)  
+
 ---
 
 ## Features
