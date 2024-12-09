@@ -9,6 +9,21 @@ Welcome to **Stuber**—a platform that connects student drivers with riders on 
 Stuber aims to create a safe and sustainable transportation option for students. By fostering a sense of community, the platform encourages resource sharing, helps reduce traffic congestion, and promotes eco-friendly practices.
 
 ---
+## Resources  
+
+### 📄 Real-Time Document (Updating)  
+Access the real-time project document for the latest updates and collaborative notes:  
+[View Document](https://docs.google.com/document/d/1EifpK-smMThfvL2LZBzVr9WtOyCFKR2P0xPW9_jJGIg/edit?usp=sharing)  
+
+### 🗓 Weekly Updates  
+Stay updated with weekly progress and milestones:  
+[View Weekly Updates](https://docs.google.com/document/d/1bVDtvVY7ZYYP-ZsggBMKRVDvTU93Kd3C9LRbnruOyV0/edit?usp=sharing)  
+
+### 🛠 Architecture and Design  
+Explore the architecture and design documentation:  
+[View Architecture and Design](https://docs.google.com/document/d/1P2c02CNmza03spt1AojE5A9xKzkQpUw9srG-SpRV_lM/edit?usp=sharing)  
+
+---
 
 ## Features
 
